@@ -31,14 +31,14 @@
 
             <ul class="list-unstyled components">
                 <p>*Barangay Name*</p>
-                <li class="active">
-                    <a>
+                <li>
+                    <a href="index.php">
                         <span class="icon"><i  class="fas fa-home"></i></span>
                         Dashboard
                     </a>
                 </li>
-                <li>
-                    <a href="resident-information.php">
+                <li class="active">
+                    <a>
                         <span class="icon"><i  class="fas fa-users"></i></span>
                         Resident Information
                     </a>
@@ -86,7 +86,7 @@
                         <i class="fas fa-align-left"></i>
                     </button>
 
-                    <h3 class="nav-item ml-auto mr-0 my-auto">DASHBOARD</h3>
+                    <h3 class="nav-item ml-auto mr-0 my-auto">RESIDENT INFORMATION</h3>
                 </div>
             </nav>
 
