@@ -1,3 +1,16 @@
 cd css
 sass style.scss style.css
-exit 0
+
+Color Pallete: (light - dark)
+E5FCC2   
+9DE0AD   
+45ADA8   
+547980   
+594F4F
+
+A8A7A7   
+CC527A   
+E8175D   
+474747   
+363636 
+
