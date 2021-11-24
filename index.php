@@ -17,16 +17,19 @@
 </head>
 
 <body>
-
     <div class="wrapper">
-        <!-- Sidebar  -->
+
+        <!-----------------------------------------------------
+            Sidebar
+        ------------------------------------------------------->
+
         <nav id="sidebar">
             <button type="button" id="sidebarCollapse1" class="btn btn-info">
                 <i class="fas fa-times"></i>
             </button>
 
-            <div class="sidebar-header">
-                <h3>Logo</h3>
+            <div class="sidebar-header d-flex justify-content-center">
+                <img src="assets/barangay-config/logo.png" alt="Logo" class="logo">
             </div>
 
             <ul class="list-unstyled components">
@@ -62,7 +65,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="accounts.php">
                         <span class="icon"><i  class="fas fa-user-cog"></i></span>
                         Accounts
                     </a>
@@ -76,7 +79,10 @@
             </ul>
         </nav>
 
-        <!-- Page Content  -->
+        <!-----------------------------------------------------
+            CONTENT
+        ------------------------------------------------------->
+
         <div id="content">
 
             <nav id="topbar" class="navbar navbar-expand-lg">
@@ -91,27 +97,149 @@
             </nav>
 
             <div class="content">
-                <h2>Collapsible Sidebar Using Bootstrap 4</h2>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
 
-                <div class="line"></div>
+                <div id="header">
+                        <div class="d-flex justify-content-center">
+                            <img src="assets/barangay-config/logo.png" alt="Logo" class="logo">
+                        </div>
+                        <div class="text-center">
+                            <h1>*Barangay Name*</h1>
+                            <h3>*City and Region*</h3>
+                        </div>
+                </div>
 
-                <h2>Lorem Ipsum Dolor</h2>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <div class="container-xl row m-0 p-0 mx-auto">
+                    <div class="col-xl-7">
+                        <div class="bg-dark p-1">
+                            <span class="text-white">Barangay Officials</span>
+                        </div>
+                        <?php
+                            $myfile = fopen("assets/barangay-config/commitee.txt", "r") or die("Unable to open file!");
+                            $a_commitee = [];
+                            while(!feof($myfile)) {
+                                array_push($a_commitee, fgets($myfile));
+                            }
+                            fclose($myfile);
 
-                <div class="line"></div>
+                            $myfile = fopen("assets/barangay-config/position.txt", "r") or die("Unable to open file!");
+                            $a_position = [];
+                            while(!feof($myfile)) {
+                                array_push($a_position, fgets($myfile));
+                            }
+                            fclose($myfile);
 
-                <h2>Lorem Ipsum Dolor</h2>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                            // Include config file
+                            require_once "config.php";
 
-                <div class="line"></div>
+                            // Attempt select query execution
+                            $sql = "SELECT * FROM accounts";
+                            if ($result = $mysqli->query($sql)) {
+                                if ($result->num_rows > 0) {
+                                    echo '<table class="table table-bordered table-striped text-center bg-white">';
+                                    echo "<thead>";
+                                    echo "<tr>";
+                                    echo "<th>Full Name</th>";
+                                    echo "<th>Commitee</th>";
+                                    echo "<th>Position</th>";
+                                    echo "</tr>";
+                                    echo "</thead>";
+                                    echo "<tbody>";
+                                    while ($row = $result->fetch_array()) {
+                                        echo "<tr>";
+                                        echo "<td>" . $row['LNAME'] . ', ' . $row['FNAME'] . ' ' . $row['MNAME'][0] . ".</td>";
+                                        echo "<td>" . $a_commitee[$row['COMMITEE']] . "</td>";
+                                        echo "<td>" . $a_position[$row['POSITION']] . "</td>";
+                                        echo "</td>";
+                                        echo "</tr>";
+                                    }
+                                    echo "</tbody>";
+                                    echo "</table>";
+                                    // Free result set
+                                    $result->free();
+                                } else {
+                                    echo '<div class="alert alert-danger"><em>No records were found.</em></div>';
+                                }
+                            } else {
+                                echo "Oops! Something went wrong. Please try again later.";
+                            }
 
-                <h3>Lorem Ipsum Dolor</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                            // Close connection
+                            $mysqli->close();
+                        ?>
+                    </div>
+
+                    <div class="col-xl-5">
+                        <div class="container-xl row m-0 p-0 mx-auto">
+                            <div class="card col-xl-12">
+                                <div class="card-body">
+                                    <h5 class="card-title">Total Registered Population</h5>
+                                    <p class="card-text">[COUNT]</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="container-xl row m-0 p-0 mx-auto">
+                            <div class="card col-xl-6">
+                                <div class="card-body">
+                                    <h5 class="card-title">Male</h5>
+                                    <p class="card-text">[COUNT]</p>
+                                </div>
+                            </div>
+                            <div class="card col-xl-6">
+                                <div class="card-body">
+                                    <h5 class="card-title">Female</h5>
+                                    <p class="card-text">[COUNT]</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="container-xl row m-0 p-0 mx-auto">
+                            <div class="card col-xl-12">
+                                <div class="card-body">
+                                    <h5 class="card-title">Registered Voters</h5>
+                                    <p class="card-text">[COUNT]</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="line"></div>
+                        
+                        <div class="container-xl m-0 p-0 mx-auto">
+                            <div class="bg-dark p-1">
+                                <span class="text-white">Puroks/Area</span>
+                            </div>
+                            <table class="table table-striped bg-white">
+                                <thead>
+                                    <tr>
+                                    <th scope="col">Area Name</th>
+                                    <th scope="col">Population Count</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Area_1</td>
+                                        <td>[count]</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Area_2</td>
+                                        <td>[count]</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Area_3</td>
+                                        <td>[count]</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
+
+    <!-----------------------------------------------------
+        Scripts
+    ------------------------------------------------------->
 
     <!-- jQuery CDN - Slim version (=without AJAX) -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>

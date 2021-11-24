@@ -19,14 +19,18 @@
 <body>
 
     <div class="wrapper">
-        <!-- Sidebar  -->
+
+        <!-----------------------------------------------------
+            Sidebar
+        ------------------------------------------------------->
+
         <nav id="sidebar">
             <button type="button" id="sidebarCollapse1" class="btn btn-info">
                 <i class="fas fa-times"></i>
             </button>
 
-            <div class="sidebar-header">
-                <h3>Logo</h3>
+            <div class="sidebar-header d-flex justify-content-center">
+                <img src="assets/barangay-config/logo.png" alt="Logo" class="logo">
             </div>
 
             <ul class="list-unstyled components">
@@ -62,7 +66,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="accounts.php">
                         <span class="icon"><i  class="fas fa-user-cog"></i></span>
                         Accounts
                     </a>
@@ -76,7 +80,10 @@
             </ul>
         </nav>
 
-        <!-- Page Content  -->
+        <!-----------------------------------------------------
+            Content
+        ------------------------------------------------------->
+
         <div id="content">
 
             <nav id="topbar" class="navbar navbar-expand-lg">
