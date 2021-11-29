@@ -1,7 +1,7 @@
 <?php
     define('MB', 1048576);
     $brgy_name = $brgy_address = "";
-    $brgy_name_err = $brgy_address_err = $committee_err = $position_err = "";
+    $brgy_name_err = $brgy_address_err = $err = "";
 
     $myfile = fopen("assets/barangay-config/brgy-details.txt", "r") or die("Unable to open file!");
     $brgy_name = fgets($myfile);
@@ -21,8 +21,17 @@
         array_push($a_position, fgets($myfile));
     }
     fclose($myfile);
+
+    $myfile = fopen("assets/barangay-config/area.txt", "r") or die("Unable to open file!");
+    $a_area = [];
+    while(!feof($myfile)) {
+        array_push($a_area, fgets($myfile));
+    }
+    fclose($myfile);
+
     $a_committee = array_filter($a_committee, 'trim');
     $a_position = array_filter($a_position, 'trim');
+    $a_area = array_filter($a_area, 'trim');
     
     if(isset($_GET["type"])) {
         $type = trim($_GET["type"]);
@@ -37,11 +46,15 @@
     if($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if(isset($_POST["committee"]) && empty(trim($_POST["committee"]))) {
-            $committee_err = "Must Fill.";
+            $err = "Must Fill.";
         }
 
         if(isset($_POST["position"]) && empty(trim($_POST["position"]))) {
-            $position_err = "Must Fill.";
+            $err = "Must Fill.";
+        }
+
+        if(isset($_POST["area"]) && empty(trim($_POST["area"]))) {
+            $err = "Must Fill.";
         }
 
         if(isset($_POST["add"]) && !empty(trim($_POST["add"]))) {
@@ -49,24 +62,35 @@
         }
 
         if(isset($_POST["delete"])) {
-            if($_POST["type"]) {
-                unset($a_position[$_POST["id"]-1]);
-                $myfile = fopen("assets/barangay-config/position.txt", "w") or die("Unable to open file!");
-                foreach ($a_position as $text) {
-                    fwrite($myfile, $text);
-                }
-                fclose($myfile);
-            } else {
-                unset($a_committee[$_POST["id"]-1]);
-                $myfile = fopen("assets/barangay-config/committee.txt", "w") or die("Unable to open file!");
-                foreach ($a_committee as $text) {
-                    fwrite($myfile, $text);
-                }
-                fclose($myfile);
+            switch($_POST["type"]) {
+                case 0: 
+                    unset($a_committee[$_POST["id"]-1]);
+                    $myfile = fopen("assets/barangay-config/committee.txt", "w") or die("Unable to open file!");
+                    foreach ($a_committee as $text) {
+                        fwrite($myfile, $text);
+                    }
+                    fclose($myfile);
+                    break;
+                case 1:
+                    unset($a_position[$_POST["id"]-1]);
+                    $myfile = fopen("assets/barangay-config/position.txt", "w") or die("Unable to open file!");
+                    foreach ($a_position as $text) {
+                        fwrite($myfile, $text);
+                    }
+                    fclose($myfile);
+                    break;
+                case 2:
+                    unset($a_area[$_POST["id"]-1]);
+                    $myfile = fopen("assets/barangay-config/area.txt", "w") or die("Unable to open file!");
+                    foreach ($a_area as $text) {
+                        fwrite($myfile, $text);
+                    }
+                    fclose($myfile);
+                    break;
             }
         }
 
-        if(empty($committee_err) && empty($position_err)) {
+        if(empty($err)) {
             if(isset($_POST["committee"])) {
                 if(!isset($add)) {
                     $ext = (count($a_committee)==(trim($_POST["id"]))) ? '' : "\n";
@@ -95,81 +119,93 @@
                     array_push($a_position, trim($_POST["position"]));
                 }
                 fclose($myfile);
-            }
-        } else {
-            echo '<script>
-            alert("'.$committee_err.$position_err.'");
-            </script>';
-        }
-
-        $target_dir = "assets/barangay-config/";
-        $uploadOk = 1;
-        $imageFileType = strtolower(pathinfo(basename($_FILES["logo"]["name"]),PATHINFO_EXTENSION));
-        $error_msg = "";    
-
-        if($_FILES["logo"]["size"] != 0) {
-            // Check if image file is a actual image or fake image
-            $check = getimagesize($_FILES["logo"]["tmp_name"]);
-            if($check === false) {
-                $error_msg = $error_msg.'\nFile is not an image.';
-                $uploadOk = 0;
-            }
-
-            // Check file size
-            if ($_FILES["logo"]["size"] > 2*MB) {
-                $error_msg = $error_msg.'\nSorry, your file is too large.';
-                $uploadOk = 0;
-            }
-
-            // Allow certain file formats
-            if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
-                && $imageFileType != "gif" ) {
-                $error_msg = $error_msg.'\nSorry, only JPG, JPEG, PNG & GIF files are allowed.';
-                $uploadOk = 0;
-            }
-
-            // Check if $uploadOk is set to 0 by an error
-            if ($uploadOk == 0) {
-                echo "<script>
-                alert('Logo not uploaded. ".$error_msg."');
-                </script>";
-                // if everything is ok, try to upload file
-            } else {
-                if (move_uploaded_file($_FILES["logo"]["tmp_name"], $target_dir . 'logo.png')) {
-                    echo "<script>
-                    alert('The file ". htmlspecialchars( basename( $_FILES["logo"]["name"])). " has been uploaded.');
-                    </script>";
-                } else {
-                    echo "<script>
-                    alert('Sorry, there was an error uploading your file.');
-                    </script>";
+            } elseif(isset($_POST["area"]) && !empty(trim($_POST["area"]))) {
+                if(!isset($add)) {
+                    $ext = (count($a_area)==(trim($_POST["id"]))) ? '' : "\n";
+                    $a_area = array_replace($a_area, array(trim($_POST["id"])-1 => trim($_POST["area"]).$ext));
                 }
+                $myfile = fopen("assets/barangay-config/area.txt", "w") or die("Unable to open file!");
+                foreach ($a_area as $text) {
+                    fwrite($myfile, $text);
+                }
+                if(isset($add)) {
+                    fwrite($myfile, "\n".trim($_POST["area"]));
+                    array_push($a_area, trim($_POST["area"]));
+                }
+                fclose($myfile);
             }
         }
 
-        if(empty(trim($_POST["brgy-name"]))) {
-            $brgy_name_err = "Must Fill";
-        } else {
-            $brgy_name = trim($_POST["brgy-name"])."\n";
-        }
+        if(isset($_FILES["logo"]["name"])) {
+            $target_dir = "assets/barangay-config/";
+            $uploadOk = 1;
+            $imageFileType = strtolower(pathinfo(basename($_FILES["logo"]["name"]),PATHINFO_EXTENSION));
+            $error_msg = "";
+            
+            if($_FILES["logo"]["size"] != 0) {
+                // Check if image file is a actual image or fake image
+                $check = getimagesize($_FILES["logo"]["tmp_name"]);
+                if($check === false) {
+                    $error_msg = $error_msg.'\nFile is not an image.';
+                    $uploadOk = 0;
+                }
 
-        if(empty(trim($_POST["brgy-address"]))) {
-            $brgy_address_err = "Must Fill";
-        } else {
-            $brgy_address = trim($_POST["brgy-address"]);
-        }
+                // Check file size
+                if ($_FILES["logo"]["size"] > 2*MB) {
+                    $error_msg = $error_msg.'\nSorry, your file is too large.';
+                    $uploadOk = 0;
+                }
 
-        if(empty($brgy_name_err) && empty($brgy_address_err)) {
-            $myfile = fopen("assets/barangay-config/brgy-details.txt", "w") or die("Unable to open file!");
-            fwrite($myfile, $brgy_name);
-            fwrite($myfile, $brgy_address);
-            fclose($myfile);
-        }
+                // Allow certain file formats
+                if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
+                    && $imageFileType != "gif" ) {
+                    $error_msg = $error_msg.'\nSorry, only JPG, JPEG, PNG & GIF files are allowed.';
+                    $uploadOk = 0;
+                }
+
+                // Check if $uploadOk is set to 0 by an error
+                if ($uploadOk == 0) {
+                    echo "<script>
+                    alert('Logo not uploaded. ".$error_msg."');
+                    </script>";
+                    // if everything is ok, try to upload file
+                } else {
+                    if (move_uploaded_file($_FILES["logo"]["tmp_name"], $target_dir . 'logo.png')) {
+                        echo "<script>
+                        alert('Logo has been uploaded.');
+                        </script>";
+                        header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP 1.1.
+                        header("Pragma: no-cache"); // HTTP 1.0.
+                        header("Expires: 0");
+                        header("Refresh:0");
+                    } else {
+                        echo "<script>
+                        alert('Sorry, there was an error uploading your file.');
+                        </script>";
+                    }
+                }
+            }            
+
+            if(empty(trim($_POST["brgy-name"]))) {
+                $brgy_name_err = "Must Fill";
+            } else {
+                $brgy_name = trim($_POST["brgy-name"])."\n";
+            }
+
+            if(empty(trim($_POST["brgy-address"]))) {
+                $brgy_address_err = "Must Fill";
+            } else {
+                $brgy_address = trim($_POST["brgy-address"]);
+            }
+
+            if(empty($brgy_name_err) && empty($brgy_address_err)) {
+                $myfile = fopen("assets/barangay-config/brgy-details.txt", "w") or die("Unable to open file!");
+                fwrite($myfile, $brgy_name);
+                fwrite($myfile, $brgy_address);
+                fclose($myfile);
+            }
+            }
     }
-
-    header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP 1.1.
-    header("Pragma: no-cache"); // HTTP 1.0.
-    header("Expires: 0");
 ?>
 
 <!DOCTYPE html>
@@ -342,8 +378,6 @@
                             echo "</tbody>";
                             echo "</table>";
                         ?>
-                    </div>
-                    <div class="col-xl-6">
                         <?php
                             $index = 1;
                             echo '<table class="table table-striped text-center">';
@@ -373,6 +407,36 @@
                             echo "</table>";
                         ?>
                     </div>
+                    <div class="col-xl-6">
+                        <?php
+                            $index = 1;
+                            echo '<table class="table table-striped text-center">';
+                            echo "<thead>";
+                            echo "<tr class='bg-dark'>";
+                            echo "<th>";
+                            echo '<div class="row"><div class="col-xl-10">Areas / Puroks</div>';
+                            echo '<div class="col-xl-2"><a href="?type=2&add=1" class="action" title="Update Record" data-toggle="tooltip"><span class="fa fa-plus"></span></a>';
+                            echo "</div>";
+                            echo "</div>";
+                            echo "</th>";
+                            echo "</tr>";
+                            echo "</thead>";
+                            echo "<tbody>";
+                            foreach ($a_area as $text) {
+                                echo "<tr>";
+                                echo "<td>";
+                                echo '<div class="row"><div class="col-xl-10">'.$text.'</div>';
+                                echo '<div class="col-xl-2"><a href="?id='.$index.'&type=2  " class="mr-3 action" title="Update Record" data-toggle="tooltip"><span class="fas fa-pencil-alt"></span></a>';
+                                echo '<a href="?id='.$index++.'&type=2&add=0" class="action" title="Delete Record" data-toggle="tooltip"><span class="fa fa-trash"></span></a>';
+                                echo "</div>";
+                                echo "</div>";
+                                echo "</td>";
+                                echo "</tr>";
+                            }
+                            echo "</tbody>";
+                            echo "</table>";
+                        ?>
+                    </div>
                 </div>
             </div>
         </div>
@@ -386,7 +450,15 @@
         <div class="modal-dialog modal-dialog-centered modal-md " role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle"><?php echo $type ? "Position" : "Committee"?></h5>
+                    <h5 class="modal-title" id="exampleModalLongTitle">
+                        <?php 
+                        echo isset($add) ? 'Add ' : '';
+                        switch($type) {
+                            case 0: echo "Committee"; break;
+                            case 1: echo "Position"; break;
+                            case 2: echo "Area";
+                        }?>
+                    </h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                     </button>
@@ -397,15 +469,30 @@
                                 <span class="mb-0 mt-auto mx-1">Name: </span>
                                 <input
                                     type="text"
-                                    class="form-control"
-                                    name="<?php echo $type ? "position" : "committee"?>"
+                                    class="form-control <?php echo (!empty($err)) ? 'invalid' : ''; ?>"
+                                    name="<?php 
+                                        switch($type) {
+                                            case 0: echo "committee"; break;
+                                            case 1: echo "position"; break;
+                                            case 2: echo "area";
+                                        }?>"
                                     placeholder="<?php 
-                                        if(!isset($add)) {
-                                            echo $type ? $a_position[$id-1] : $a_committee[$id-1];
+                                        if(!empty($err)) {
+                                            echo 'invalid';
+                                        } elseif(!isset($add)) {
+                                            switch($type) {
+                                                case 0: echo $a_committee[$id-1]; break;
+                                                case 1: echo $a_position[$id-1]; break;
+                                                case 2: echo $a_area[$id-1];
+                                            }
                                         }?>"
                                     value="<?php 
                                         if(!isset($add)) {
-                                            echo $type ? $a_position[$id-1] : $a_committee[$id-1];
+                                            switch($type) {
+                                                case 0: echo $a_committee[$id-1]; break;
+                                                case 1: echo $a_position[$id-1]; break;
+                                                case 2: echo $a_area[$id-1];
+                                            }
                                         }?>"
                                 >
                                 <input type="hidden" 
@@ -433,8 +520,19 @@
                 </div>
                 <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                 <div class="modal-body mx-auto">
-                    <h4>Delete <?php echo $type ? "Position" : "Committee"?>: 
-                    <?php echo $type ? $a_position[$id-1] : $a_committee[$id-1] ?>?</h4>
+                    <h4>Delete <?php
+                        switch($type) {
+                            case 0: echo "Committee"; break;
+                            case 1: echo "Position"; break;
+                            case 2: echo "Area";
+                        }?>: 
+                        <?php 
+                        switch($type) {
+                            case 0: echo $a_committee[$id-1]; break;
+                            case 1: echo $a_position[$id-1]; break;
+                            case 2: echo $a_area[$id-1];
+                        }?>?
+                    </h4>
                     
                     <input type="hidden" name="type" value="<?php echo $type?>" />
                     <input type="hidden" name="delete" value="1" />
