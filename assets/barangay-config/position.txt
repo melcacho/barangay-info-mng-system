@@ -1,3 +1,5 @@
-barangay captain
+Brgy Captain
 position_2
-position_3
+Secretary
+position_4
+position_5

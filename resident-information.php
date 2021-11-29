@@ -1,3 +1,10 @@
+<?php
+    $myfile = fopen("assets/barangay-config/brgy-details.txt", "r") or die("Unable to open file!");
+    $brgy_name = fgets($myfile);
+    $brgy_address = fgets($myfile);
+    fclose($myfile);
+?>
+
 <!DOCTYPE html>
 <html>
 
@@ -34,7 +41,7 @@
             </div>
 
             <ul class="list-unstyled components">
-                <p>*Barangay Name*</p>
+                <h4>Brgy. <?php echo $brgy_name;?></h4>
                 <li>
                     <a href="index.php">
                         <span class="icon"><i  class="fas fa-home"></i></span>
@@ -48,19 +55,19 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="blotter-records.php">
                         <span class="icon"><i  class="fas fa-archive"></i></span>
                         Blotter Records
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="settlement-schedules.php">
                         <span class="icon"><i  class="fas fa-calendar"></i></span>
                         Settlement Schedules
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="cert-issuance.php">
                         <span class="icon"><i  class="fas fa-certificate"></i></span>
                         Certificatie Issuance
                     </a>
@@ -72,7 +79,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="barangay-config.php">
                         <span class="icon"><i  class="fas fa-cog"></i></span>
                         Barangay Config
                     </a>

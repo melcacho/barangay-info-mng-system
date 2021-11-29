@@ -6,7 +6,12 @@ require_once "config.php";
 $first_name = $middle_name = $last_name = $contact_number = $email = $username = $password = "";
 $name_err = $contact_number_err = $email_err = $password_err = $id = "";
 
-$modal_view = $commitee = $position = $delete_modal_view = 0;
+$modal_view = $committee = $position = $delete_modal_view = 0;
+
+$myfile = fopen("assets/barangay-config/brgy-details.txt", "r") or die("Unable to open file!");
+$brgy_name = fgets($myfile);
+$brgy_address = fgets($myfile);
+fclose($myfile);
 
 if (isset($_GET["id"]) && !empty(trim($_GET["id"])) && trim($_GET["id"]) != '') {
     // Get URL parameter
@@ -18,7 +23,7 @@ if (isset($_GET["delete"]) && trim($_GET["delete"]) != "" && isset($_GET["id"]))
     $delete = trim($_GET["delete"]);
     if($delete) {
         // Prepare a delete statement
-        $sql = "DELETE FROM accounts WHERE id = ?";
+        $sql = "DELETE FROM accounts WHERE ID = ?";
 
         if ($stmt = $mysqli->prepare($sql)) {
             // Bind variables to the prepared statement as parameters
@@ -64,7 +69,7 @@ if (isset($_GET["delete"]) && trim($_GET["delete"]) != "" && isset($_GET["id"]))
                 $last_name = $row["LNAME"];
                 $contact_number = $row["CONTACT"];
                 $email = $row["EMAIL"];
-                $commitee = $row["COMMITEE"];
+                $committee = $row["COMMITTEE"];
                 $position = $row["POSITION"];
                 
                 $modal_view = 1;
@@ -175,7 +180,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
     }
 
-    $commitee = trim($_POST["commitee"]);
+    $committee = trim($_POST["committee"]);
     $position = trim($_POST["position"]);
 
     // Check input errors before inserting in database
@@ -183,11 +188,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if(!empty($id)) {
             // Prepare an update statement
-            $sql = "UPDATE accounts SET FNAME=?, MNAME=?, LNAME=?, CONTACT=?, EMAIL=?, COMMITEE=?, POSITION=?, 
+            $sql = "UPDATE accounts SET FNAME=?, MNAME=?, LNAME=?, CONTACT=?, EMAIL=?, COMMITTEE=?, POSITION=?, 
             USERNAME=?, PASSWORD=? WHERE ID=?";
         } else {
             // Prepare an insert statement
-            $sql = "INSERT INTO accounts (FNAME, MNAME, LNAME, CONTACT, EMAIL, COMMITEE, POSITION, USERNAME, PASSWORD) 
+            $sql = "INSERT INTO accounts (FNAME, MNAME, LNAME, CONTACT, EMAIL, COMMITTEE, POSITION, USERNAME, PASSWORD) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         }
 
@@ -195,13 +200,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Bind variables to the prepared statement as parameters
             if(!empty($id)) {
                 $stmt->bind_param("sssssssssi", $param_first_name, $param_middle_name, $param_last_name,
-                $param_contact_number, $param_email, $param_commitee, $param_position, $param_username, 
+                $param_contact_number, $param_email, $param_committee, $param_position, $param_username, 
                 $param_password, $param_id);
 
                 $param_id = $id;
             } else {
                 $stmt->bind_param("sssssssss", $param_first_name, $param_middle_name, $param_last_name,
-                $param_contact_number, $param_email, $param_commitee, $param_position, $param_username, $param_password);
+                $param_contact_number, $param_email, $param_committee, $param_position, $param_username, $param_password);
 
             }
             // Set parameters
@@ -212,7 +217,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $param_email = strtoupper($email);
             $param_username = strtolower($username); 
             $param_password = password_hash($password, PASSWORD_DEFAULT);
-            $param_commitee = $commitee;
+            $param_committee = $committee;
             $param_position = $position;
 
             // Attempt to execute the prepared statement
@@ -220,7 +225,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $first_name = $middle_name = $last_name = $contact_number = $email = $username = $password = "";
                 $name_err = $contact_number_err = $email_err= $password_err = "";
                                 
-                $modal_view = $commitee = $position = 0;
+                $modal_view = $committee = $position = 0;
             } else {
                 echo '<script>
                 alert("Oops! Something went wrong. Please try again later.");
@@ -259,7 +264,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
 
     <div class="wrapper">
-
         <!-----------------------------------------------------
             Sidebar
         ------------------------------------------------------->
@@ -274,7 +278,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
 
             <ul class="list-unstyled components">
-                <p>*Barangay Name*</p>
+                <h4>Brgy. <?php echo $brgy_name;?></h4>
                 <li>
                     <a href="index.php">
                         <span class="icon"><i  class="fas fa-home"></i></span>
@@ -288,19 +292,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="blotter-records.php">
                         <span class="icon"><i  class="fas fa-archive"></i></span>
                         Blotter Records
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="settlement-schedules.php">
                         <span class="icon"><i  class="fas fa-calendar"></i></span>
                         Settlement Schedules
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="cert-issuance.php">
                         <span class="icon"><i  class="fas fa-certificate"></i></span>
                         Certificatie Issuance
                     </a>
@@ -312,7 +316,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="barangay-config.php">
                         <span class="icon"><i  class="fas fa-cog"></i></span>
                         Barangay Config
                     </a>
@@ -349,89 +353,88 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             Add New Admin
                         </a>
                     </div>
-                    <?php
-                    $myfile = fopen("assets/barangay-config/commitee.txt", "r") or die("Unable to open file!");
-                    $a_commitee = [];
-                    while(!feof($myfile)) {
-                        array_push($a_commitee, fgets($myfile));
-                    }
-                    fclose($myfile);
 
-                    $myfile = fopen("assets/barangay-config/position.txt", "r") or die("Unable to open file!");
-                    $a_position = [];
-                    while(!feof($myfile)) {
-                        array_push($a_position, fgets($myfile));
-                    }
-                    fclose($myfile);
-
-                    // Include config file
-                    require_once "config.php";
-
-                    // Attempt select query execution
-                    $sql = "SELECT * FROM accounts";
-                    if ($result = $mysqli->query($sql)) {
-                        if ($result->num_rows > 0) {
-                            echo '<table class="table table-bordered table-striped text-center">';
-                            echo "<thead>";
-                            echo "<tr class=\"bg-dark\">";
-                            echo "<th>#</th>";
-                            echo "<th>Full Name</th>";
-                            echo "<th>Commitee</th>";
-                            echo "<th>Position</th>";
-                            echo "<th>Email</th>";
-                            echo "<th>Contact</th>";
-                            echo "<th>Action</th>";
-                            echo "</tr>";
-                            echo "</thead>";
-                            echo "<tbody>";
-                            while ($row = $result->fetch_array()) {
-                                echo "<tr>";
-                                echo "<td>" . $row['ID'] . "</td>";
-                                echo "<td>" . $row['LNAME'] . ', ' . $row['FNAME'] . ' ' . $row['MNAME'][0] . ".</td>";
-                                echo "<td>" . $a_commitee[$row['COMMITEE']] . "</td>";
-                                echo "<td>" . $a_position[$row['POSITION']] . "</td>";
-                                echo "<td>" . $row['EMAIL'] . "</td>";
-                                echo "<td>" . $row['CONTACT'] . "</td>";
-                                echo "<td>";
-                                echo '<a href="?id=' . $row['ID'] . '" class="mr-3 action" title="Update Record" data-toggle="tooltip"><span class="fas fa-pencil-alt"></span></a>';
-                                echo '<a href="?id=' . $row['ID'] . '&delete=0" class="action" title="Delete Record" data-toggle="tooltip"><span class="fa fa-trash"></span></a>';
-                                echo "</td>";
-                                echo "</tr>";
+                    <div class="overflow-auto">
+                        <?php
+                            $myfile = fopen("assets/barangay-config/committee.txt", "r") or die("Unable to open file!");
+                            $a_committee = [];
+                            while(!feof($myfile)) {
+                                array_push($a_committee, fgets($myfile));
                             }
-                            echo "</tbody>";
-                            echo "</table>";
-                            // Free result set
-                            $result->free();
-                        } else {
-                            echo '<div class="alert alert-danger"><em>No records were found.</em></div>';
-                        }
-                    } else {
-                        echo '<script>
-                        alert("Oops! Something went wrong. Please try again later.");
-                        </script>';
-                    }
+                            fclose($myfile);
 
-                    // Close connection
-                    $mysqli->close();
-                    ?>
+                            $myfile = fopen("assets/barangay-config/position.txt", "r") or die("Unable to open file!");
+                            $a_position = [];
+                            while(!feof($myfile)) {
+                                array_push($a_position, fgets($myfile));
+                            }
+                            fclose($myfile);
+
+                            // Include config file
+                            require_once "config.php";
+
+                            // Attempt select query execution
+                            $sql = "SELECT * FROM accounts";
+                            if ($result = $mysqli->query($sql)) {
+                                if ($result->num_rows > 0) {
+                                    echo '<table class="table table-bordered table-striped text-center">';
+                                    echo "<thead>";
+                                    echo "<tr class=\"bg-dark\">";
+                                    echo "<th>Full Name</th>";
+                                    echo "<th>Committee</th>";
+                                    echo "<th>Position</th>";
+                                    echo "<th>Email</th>";
+                                    echo "<th>Contact</th>";
+                                    echo "<th>Action</th>";
+                                    echo "</tr>";
+                                    echo "</thead>";
+                                    echo "<tbody>";
+                                    while ($row = $result->fetch_array()) {
+                                        echo "<tr>";
+                                        echo "<td>" . $row['LNAME'] . ', ' . $row['FNAME'] . ' ' . $row['MNAME'][0] . ".</td>";
+                                        echo "<td>" . $a_committee[$row['COMMITTEE']] . "</td>";
+                                        echo "<td>" . $a_position[$row['POSITION']] . "</td>";
+                                        echo "<td>" . $row['EMAIL'] . "</td>";
+                                        echo "<td>" . $row['CONTACT'] . "</td>";
+                                        echo "<td>";
+                                        echo '<a href="?id=' . $row['ID'] . '" class="mr-3 action" title="Update Record" data-toggle="tooltip"><span class="fas fa-pencil-alt"></span></a>';
+                                        echo '<a href="?id=' . $row['ID'] . '&delete=0" class="action" title="Delete Record" data-toggle="tooltip"><span class="fa fa-trash"></span></a>';
+                                        echo "</td>";
+                                        echo "</tr>";
+                                    }
+                                    echo "</tbody>";
+                                    echo "</table>";
+                                    // Free result set
+                                    $result->free();
+                                } else {
+                                    echo '<div class="alert alert-danger"><em>No records were found.</em></div>';
+                                }
+                            } else {
+                                echo '<script>
+                                alert("Oops! Something went wrong. Please try again later.");
+                                </script>';
+                            }
+                        ?>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-----------------------------------------------------
-            Modal
-        ------------------------------------------------------->
-        
-        <div class="modal fade" id="create_modal" tabindex="-1" role="dialog" aria-labelledby="create" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Create Account</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
+    <!-----------------------------------------------------
+        Modal
+    ------------------------------------------------------->
+    
+    <div class="modal fade" id="create_modal" tabindex="-1" role="dialog" aria-labelledby="create" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Create Account</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
                     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                         <div class="form-group row">
                             <!-- first-name -->
@@ -504,19 +507,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </div>
                         
                         <div class="form-group row">
-                        <!-- Commitee -->
+                        <!-- Committee -->
                             <div class="input-group col-md-6">
-                                <span class="mb-0 mt-auto mx-1">Commitee: </span>
+                                <span class="mb-0 mt-auto mx-1">committee: </span>
                                 <select class="form-control" 
                                 aria-label="Default select example" 
-                                name="commitee"
+                                name="committee"
                                 required="required">
                                 <?php
-                                    $myfile = fopen("assets/barangay-config/commitee.txt", "r") or die("Unable to open file!");
+                                    $myfile = fopen("assets/barangay-config/committee.txt", "r") or die("Unable to open file!");
                                     $i = 0;
                                     // Output one character until end-of-file
                                     while(!feof($myfile)) {
-                                        echo '<option value="'.$i.'" '.(($commitee == $i++) ? 'selected': '').'>'.fgets($myfile).'</option>';
+                                        echo '<option value="'.$i.'" '.(($committee == $i++) ? 'selected': '').'>'.fgets($myfile).'</option>';
                                     }
                                     fclose($myfile);
                                 ?>
@@ -552,20 +555,59 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
         </div>
     </div>
-    
 
     <div class="modal fade" id="delete_modal" tabindex="-1" role="dialog" aria-labelledby="create" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+        <div class="modal-dialog modal-dialog-centered modal-md " role="document">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Confirm Delete?</h5>
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title" id="exampleModalLongTitle">WARNING!</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body mx-auto">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <a href="?id=<?php echo $_GET['id']?>&delete=1" class="btn btn-danger" title="Delete Record" data-toggle="tooltip">Confirm</a>
+                    <h4>Delete data of</h4>
+                    <?php 
+                        if($delete_modal_view) {
+                            require_once "config.php";
+
+                            // Prepare a select statement
+                            $sql = "SELECT FNAME, MNAME, LNAME FROM accounts WHERE ID = ?";
+                            if ($stmt = $mysqli->prepare($sql)) {
+
+                                // Bind variables to the prepared statement as parameters
+                                $stmt->bind_param("i", $param_id);
+                                // Set parameters
+                                $param_id = $id;
+
+                                // Attempt to execute the prepared statement
+                                if ($stmt->execute()) {
+                                    $result = $stmt->get_result();
+
+                                    if ($result->num_rows == 1) {
+                                        /* Fetch result row as an associative array. Since the result set
+                                        contains only one row, we don't need to use while loop */
+                                        $row = $result->fetch_array(MYSQLI_ASSOC);
+
+                                        echo '<h4>'.$row['LNAME'].', '.$row['FNAME'].' '.$row['MNAME'][0].'. ?</h4>';
+                                        
+                                    } else {
+                                        echo '<script>
+                                        alert("Error123");
+                                        </script>';
+                                    }
+                                } else {
+                                    echo '<script>
+                                    alert("Oops! Something went wrong. Please try again later.");
+                                    </script>';
+                                }
+                            }   
+                        }
+                        // Close connection
+                        $mysqli->close();
+                    ?>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" title="Close">Close</button>
+                    <a href="?id=<?php echo $id?>&delete=1" class="btn btn-danger" title="Delete Record" data-toggle="tooltip">Confirm</a>
                     <input type="hidden" name="id" value="<?php echo $id; ?>" />
                 </div>
             </div>

@@ -1,3 +1,10 @@
+<?php
+    $myfile = fopen("assets/barangay-config/brgy-details.txt", "r") or die("Unable to open file!");
+    $brgy_name = fgets($myfile);
+    $brgy_address = fgets($myfile);
+    fclose($myfile);
+?>
+
 <!DOCTYPE html>
 <html>
 
@@ -33,7 +40,7 @@
             </div>
 
             <ul class="list-unstyled components">
-                <p>*Barangay Name*</p>
+                <h4>Brgy. <?php echo $brgy_name;?></h4>
                 <li class="active">
                     <a>
                         <span class="icon"><i  class="fas fa-home"></i></span>
@@ -47,19 +54,19 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="blotter-records.php">
                         <span class="icon"><i  class="fas fa-archive"></i></span>
                         Blotter Records
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="settlement-schedules.php">
                         <span class="icon"><i  class="fas fa-calendar"></i></span>
                         Settlement Schedules
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="cert-issuance.php">
                         <span class="icon"><i  class="fas fa-certificate"></i></span>
                         Certificatie Issuance
                     </a>
@@ -71,7 +78,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="barangay-config.php">
                         <span class="icon"><i  class="fas fa-cog"></i></span>
                         Barangay Config
                     </a>
@@ -103,8 +110,8 @@
                             <img src="assets/barangay-config/logo.png" alt="Logo" class="logo">
                         </div>
                         <div class="text-center">
-                            <h1>*Barangay Name*</h1>
-                            <h3>*City and Region*</h3>
+                            <h1>Brgy. <?php echo $brgy_name;?></h1>
+                            <h3><?php echo $brgy_address;?></h3>
                         </div>
                 </div>
 
@@ -114,10 +121,10 @@
                             <span class="text-white">Barangay Officials</span>
                         </div>
                         <?php
-                            $myfile = fopen("assets/barangay-config/commitee.txt", "r") or die("Unable to open file!");
-                            $a_commitee = [];
+                            $myfile = fopen("assets/barangay-config/committee.txt", "r") or die("Unable to open file!");
+                            $a_committee = [];
                             while(!feof($myfile)) {
-                                array_push($a_commitee, fgets($myfile));
+                                array_push($a_committee, fgets($myfile));
                             }
                             fclose($myfile);
 
@@ -139,7 +146,7 @@
                                     echo "<thead>";
                                     echo "<tr>";
                                     echo "<th>Full Name</th>";
-                                    echo "<th>Commitee</th>";
+                                    echo "<th>committee</th>";
                                     echo "<th>Position</th>";
                                     echo "</tr>";
                                     echo "</thead>";
@@ -147,7 +154,7 @@
                                     while ($row = $result->fetch_array()) {
                                         echo "<tr>";
                                         echo "<td>" . $row['LNAME'] . ', ' . $row['FNAME'] . ' ' . $row['MNAME'][0] . ".</td>";
-                                        echo "<td>" . $a_commitee[$row['COMMITEE']] . "</td>";
+                                        echo "<td>" . $a_committee[$row['COMMITTEE']] . "</td>";
                                         echo "<td>" . $a_position[$row['POSITION']] . "</td>";
                                         echo "</td>";
                                         echo "</tr>";
