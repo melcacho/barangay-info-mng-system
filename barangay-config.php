@@ -350,7 +350,7 @@
 
                 <div class="container-xl row m-0 p-0 mx-auto">
                     <div class="col-xl-6">
-                        <table class="table table-striped text-center">';
+                        <table class="table table-striped text-center">
                             <thead>
                                 <tr class='bg-dark'>
                                     <th>
@@ -382,7 +382,7 @@
                                 ?>
                             </tbody>
                         </table>
-                        <table class="table table-striped text-center">';
+                        <table class="table table-striped text-center">
                             <thead>
                                 <tr class='bg-dark'>
                                     <th>
@@ -416,7 +416,7 @@
                         </table>
                     </div>
                     <div class="col-xl-6">
-                    <table class="table table-striped text-center">';
+                        <table class="table table-striped text-center">
                             <thead>
                                 <tr class='bg-dark'>
                                     <th>

@@ -10,6 +10,7 @@
         array_push($a_area, fgets($myfile));
     }
     fclose($myfile);
+    $a_area = array_filter($a_area, 'trim');
 ?>
 
 <!DOCTYPE html>
@@ -218,28 +219,25 @@
                         
                         <div class="container-xl m-0 p-0 mx-auto">
                             <div class="bg-dark p-1">
-                                <span class="text-white">Puroks/Area</span>
+                                <span class="text-white">Puroks / Area</span>
                             </div>
-                            <table class="table table-striped bg-white">
+                            <table class="table table-striped text-center bg-white">
                                 <thead>
                                     <tr>
-                                    <th scope="col">Area Name</th>
-                                    <th scope="col">Population Count</th>
+                                        <th>Area / Purok</th>
+                                        <th>Population</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>Area_1</td>
-                                        <td>[count]</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Area_2</td>
-                                        <td>[count]</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Area_3</td>
-                                        <td>[count]</td>
-                                    </tr>
+                                    <?php
+                                        $index = 1;
+                                        foreach ($a_area as $text) {
+                                            echo "<tr>";
+                                            echo "<td>".$text."</td>";
+                                            echo "<td>[COUNT]</td>";
+                                            echo "</tr>";
+                                        }
+                                    ?>
                                 </tbody>
                             </table>
                         </div>
