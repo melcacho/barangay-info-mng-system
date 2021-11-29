@@ -101,7 +101,7 @@
                     fwrite($myfile, $text);
                 }
                 if(isset($add)) {
-                    fwrite($myfile, "\n".trim($_POST["committee"]));
+                    fwrite($myfile, trim($_POST["committee"]));
                     array_push($a_committee, trim($_POST["committee"]));
                 }
                 fclose($myfile);
@@ -115,7 +115,7 @@
                     fwrite($myfile, $text);
                 }
                 if(isset($add)) {
-                    fwrite($myfile, "\n".trim($_POST["position"]));
+                    fwrite($myfile, trim($_POST["position"]));
                     array_push($a_position, trim($_POST["position"]));
                 }
                 fclose($myfile);
@@ -129,7 +129,7 @@
                     fwrite($myfile, $text);
                 }
                 if(isset($add)) {
-                    fwrite($myfile, "\n".trim($_POST["area"]));
+                    fwrite($myfile, trim($_POST["area"]));
                     array_push($a_area, trim($_POST["area"]));
                 }
                 fclose($myfile);
@@ -350,92 +350,104 @@
 
                 <div class="container-xl row m-0 p-0 mx-auto">
                     <div class="col-xl-6">
-                        <?php
-                            $index = 1;
-                            echo '<table class="table table-striped text-center">';
-                            echo "<thead>";
-                            echo "<tr class='bg-dark'>";
-                            echo "<th>";
-                            echo '<div class="row"><div class="col-xl-10">Committee</div>';
-                            echo '<div class="col-xl-2"><a href="?type=0&add=1" class="action" title="Update Record" data-toggle="tooltip"><span class="fa fa-plus"></span></a>';
-                            echo "</div>";
-                            echo "</div>";
-                            echo "</th>";
-                            echo "</tr>";
-                            echo "</thead>";
-                            echo "<tbody>";
-                            foreach ($a_committee as $text) {
-                                echo "<tr>";
-                                echo "<td>";
-                                echo '<div class="row"><div class="col-xl-10">'.$text.'</div>';
-                                echo '<div class="col-xl-2"><a href="?id='.$index.'&type=0" class="mr-3 action" title="Update Record" data-toggle="tooltip"><span class="fas fa-pencil-alt"></span></a>';
-                                echo '<a href="?id='.$index++.'&type=0&add=0" class="action" title="Delete Record" data-toggle="tooltip"><span class="fa fa-trash"></span></a>';
-                                echo "</div>";
-                                echo "</div>";
-                                echo "</td>";
-                                echo "</tr>";
-                            }
-                            echo "</tbody>";
-                            echo "</table>";
-                        ?>
-                        <?php
-                            $index = 1;
-                            echo '<table class="table table-striped text-center">';
-                            echo "<thead>";
-                            echo "<tr class='bg-dark'>";
-                            echo "<th>";
-                            echo '<div class="row"><div class="col-xl-10">Position</div>';
-                            echo '<div class="col-xl-2"><a href="?type=1&add=1" class="action" title="Update Record" data-toggle="tooltip"><span class="fa fa-plus"></span></a>';
-                            echo "</div>";
-                            echo "</div>";
-                            echo "</th>";
-                            echo "</tr>";
-                            echo "</thead>";
-                            echo "<tbody>";
-                            foreach ($a_position as $text) {
-                                echo "<tr>";
-                                echo "<td>";
-                                echo '<div class="row"><div class="col-xl-10">'.$text.'</div>';
-                                echo '<div class="col-xl-2"><a href="?id='.$index.'&type=1  " class="mr-3 action" title="Update Record" data-toggle="tooltip"><span class="fas fa-pencil-alt"></span></a>';
-                                echo '<a href="?id='.$index++.'&type=1&add=0" class="action" title="Delete Record" data-toggle="tooltip"><span class="fa fa-trash"></span></a>';
-                                echo "</div>";
-                                echo "</div>";
-                                echo "</td>";
-                                echo "</tr>";
-                            }
-                            echo "</tbody>";
-                            echo "</table>";
-                        ?>
+                        <table class="table table-striped text-center">';
+                            <thead>
+                                <tr class='bg-dark'>
+                                    <th>
+                                        <div class="row">
+                                            <div class="col-xl-10">Committee</div>
+                                            <div class="col-xl-2">
+                                                <a href="?type=0&add=1" class="action" title="Update Record" data-toggle="tooltip">
+                                                    <span class="fa fa-plus"></span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                    $index = 1;
+                                    foreach ($a_committee as $text) {
+                                        echo "<tr>";
+                                        echo "<td>";
+                                        echo '<div class="row"><div class="col-xl-10">'.$text.'</div>';
+                                        echo '<div class="col-xl-2"><a href="?id='.$index.'&type=0" class="mr-3 action" title="Update Record" data-toggle="tooltip"><span class="fas fa-pencil-alt"></span></a>';
+                                        echo '<a href="?id='.$index++.'&type=0&add=0" class="action" title="Delete Record" data-toggle="tooltip"><span class="fa fa-trash"></span></a>';
+                                        echo "</div>";
+                                        echo "</div>";
+                                        echo "</td>";
+                                        echo "</tr>";
+                                    }
+                                ?>
+                            </tbody>
+                        </table>
+                        <table class="table table-striped text-center">';
+                            <thead>
+                                <tr class='bg-dark'>
+                                    <th>
+                                        <div class="row">
+                                            <div class="col-xl-10">Position</div>
+                                            <div class="col-xl-2">
+                                                <a href="?type=1&add=1" class="action" title="Update Record" data-toggle="tooltip">
+                                                    <span class="fa fa-plus"></span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                    $index = 1;
+                                    foreach ($a_position as $text) {
+                                        echo "<tr>";
+                                        echo "<td>";
+                                        echo '<div class="row"><div class="col-xl-10">'.$text.'</div>';
+                                        echo '<div class="col-xl-2"><a href="?id='.$index.'&type=1" class="mr-3 action" title="Update Record" data-toggle="tooltip"><span class="fas fa-pencil-alt"></span></a>';
+                                        echo '<a href="?id='.$index++.'&type=1&add=0" class="action" title="Delete Record" data-toggle="tooltip"><span class="fa fa-trash"></span></a>';
+                                        echo "</div>";
+                                        echo "</div>";
+                                        echo "</td>";
+                                        echo "</tr>";
+                                    }
+                                ?>
+                            </tbody>
+                        </table>
                     </div>
                     <div class="col-xl-6">
-                        <?php
-                            $index = 1;
-                            echo '<table class="table table-striped text-center">';
-                            echo "<thead>";
-                            echo "<tr class='bg-dark'>";
-                            echo "<th>";
-                            echo '<div class="row"><div class="col-xl-10">Areas / Puroks</div>';
-                            echo '<div class="col-xl-2"><a href="?type=2&add=1" class="action" title="Update Record" data-toggle="tooltip"><span class="fa fa-plus"></span></a>';
-                            echo "</div>";
-                            echo "</div>";
-                            echo "</th>";
-                            echo "</tr>";
-                            echo "</thead>";
-                            echo "<tbody>";
-                            foreach ($a_area as $text) {
-                                echo "<tr>";
-                                echo "<td>";
-                                echo '<div class="row"><div class="col-xl-10">'.$text.'</div>';
-                                echo '<div class="col-xl-2"><a href="?id='.$index.'&type=2  " class="mr-3 action" title="Update Record" data-toggle="tooltip"><span class="fas fa-pencil-alt"></span></a>';
-                                echo '<a href="?id='.$index++.'&type=2&add=0" class="action" title="Delete Record" data-toggle="tooltip"><span class="fa fa-trash"></span></a>';
-                                echo "</div>";
-                                echo "</div>";
-                                echo "</td>";
-                                echo "</tr>";
-                            }
-                            echo "</tbody>";
-                            echo "</table>";
-                        ?>
+                    <table class="table table-striped text-center">';
+                            <thead>
+                                <tr class='bg-dark'>
+                                    <th>
+                                        <div class="row">
+                                            <div class="col-xl-10">Area / Purok</div>
+                                            <div class="col-xl-2">
+                                                <a href="?type=2&add=1" class="action" title="Update Record" data-toggle="tooltip">
+                                                    <span class="fa fa-plus"></span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                    $index = 1;
+                                    foreach ($a_area as $text) {
+                                        echo "<tr>";
+                                        echo "<td>";
+                                        echo '<div class="row"><div class="col-xl-10">'.$text.'</div>';
+                                        echo '<div class="col-xl-2"><a href="?id='.$index.'&type=2" class="mr-3 action" title="Update Record" data-toggle="tooltip"><span class="fas fa-pencil-alt"></span></a>';
+                                        echo '<a href="?id='.$index++.'&type=2&add=0" class="action" title="Delete Record" data-toggle="tooltip"><span class="fa fa-trash"></span></a>';
+                                        echo "</div>";
+                                        echo "</div>";
+                                        echo "</td>";
+                                        echo "</tr>";
+                                    }
+                                ?>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -478,7 +490,7 @@
                                         }?>"
                                     placeholder="<?php 
                                         if(!empty($err)) {
-                                            echo 'invalid';
+                                            echo $err;
                                         } elseif(!isset($add)) {
                                             switch($type) {
                                                 case 0: echo $a_committee[$id-1]; break;

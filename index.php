@@ -3,6 +3,13 @@
     $brgy_name = fgets($myfile);
     $brgy_address = fgets($myfile);
     fclose($myfile);
+
+    $myfile = fopen("assets/barangay-config/area.txt", "r") or die("Unable to open file!");
+    $a_area = [];
+    while(!feof($myfile)) {
+        array_push($a_area, fgets($myfile));
+    }
+    fclose($myfile);
 ?>
 
 <!DOCTYPE html>
@@ -146,7 +153,7 @@
                                     echo "<thead>";
                                     echo "<tr>";
                                     echo "<th>Full Name</th>";
-                                    echo "<th>committee</th>";
+                                    echo "<th>Committee</th>";
                                     echo "<th>Position</th>";
                                     echo "</tr>";
                                     echo "</thead>";
