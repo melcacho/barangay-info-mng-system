@@ -37,7 +37,7 @@ if (isset($_GET["delete"]) && trim($_GET["delete"]) != "" && isset($_GET["id"]))
                 $delete_modal_view = 0;
             } else {
                 echo '<script>
-                alert("Oops! Something went wrong. Please try again later.");
+                alert("Delete Sequence Error: Database Access Error");
                 </script>';
             }
         }
@@ -75,12 +75,12 @@ if (isset($_GET["delete"]) && trim($_GET["delete"]) != "" && isset($_GET["id"]))
                 $modal_view = 1;
             } else {
                 echo '<script>
-                alert("Error123");
+                alert("Fetch Sequence Error: More than one set of data");
                 </script>';
             }
         } else {
             echo '<script>
-            alert("Oops! Something went wrong. Please try again later.");
+            alert("Fetch Sequence Error: Database Access Error");
             </script>';
         }
     }
@@ -136,14 +136,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $stmt->store_result();
 
                 if($stmt->num_rows > 0) {
-                    $email_err = "Already";
+                    $email_err = "Already taken";
                 } else {
                     $email = trim($_POST["email"]);
                 }
             }
         } else {
             echo '<script>
-            alert("Oops! Something went wrong. Please try again later.");
+            alert("Data Validation Error: Database Access Error");
             </script>';
         }
     }
@@ -228,12 +228,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $modal_view = $committee = $position = 0;
             } else {
                 echo '<script>
-                alert("Oops! Something went wrong. Please try again later.");
+                alert("Push Sequence Error: Database Access Error");
                 </script>';
             }
         } else {
             echo '<script>
-            alert("Oops! Something went wrong. Please try again later.");
+            alert("Push Sequence Error: Database Parameters Error");
             </script>';
         }
     } else {
