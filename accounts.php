@@ -23,7 +23,7 @@ if (isset($_GET["delete"]) && trim($_GET["delete"]) != "" && isset($_GET["id"]))
     $delete = trim($_GET["delete"]);
     if($delete) {
         // Prepare a delete statement
-        $sql = "DELETE FROM accounts WHERE ID = ?";
+        $sql = "DELETE FROM admins WHERE ID = ?";
 
         if ($stmt = $mysqli->prepare($sql)) {
             // Bind variables to the prepared statement as parameters
@@ -46,7 +46,7 @@ if (isset($_GET["delete"]) && trim($_GET["delete"]) != "" && isset($_GET["id"]))
     }
 } elseif (isset($_GET["id"]) && !empty(trim($_GET["id"])) && trim($_GET["id"]) != '') {
     // Prepare a select statement
-    $sql = "SELECT * FROM accounts WHERE ID = ?";
+    $sql = "SELECT * FROM admins WHERE ID = ?";
     if ($stmt = $mysqli->prepare($sql)) {
         // Bind variables to the prepared statement as parameters
         $stmt->bind_param("i", $param_id);
@@ -126,7 +126,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } elseif(!empty($id)) {
         $email = trim($_POST["email"]);
     } else {
-        $sql = "SELECT ID FROM accounts WHERE EMAIL = ?";
+        $sql = "SELECT ID FROM admins WHERE EMAIL = ?";
 
         if($stmt = $mysqli->prepare($sql)) {
             $stmt->bind_param("s", $param_email);
@@ -164,7 +164,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $username = $last_name . $acronym;
     // Validate username
-    $sql = "SELECT ID FROM accounts WHERE USERNAME = ?";
+    $sql = "SELECT ID FROM admins WHERE USERNAME = ?";
     if(empty($id) && $stmt = $mysqli->prepare($sql)) {
         $stmt->bind_param("s", $param_username);
         $param_username = $username;
@@ -188,11 +188,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if(!empty($id)) {
             // Prepare an update statement
-            $sql = "UPDATE accounts SET FNAME=?, MNAME=?, LNAME=?, CONTACT=?, EMAIL=?, COMMITTEE=?, POSITION=?, 
+            $sql = "UPDATE admins SET FNAME=?, MNAME=?, LNAME=?, CONTACT=?, EMAIL=?, COMMITTEE=?, POSITION=?, 
             USERNAME=?, PASSWORD=? WHERE ID=?";
         } else {
             // Prepare an insert statement
-            $sql = "INSERT INTO accounts (FNAME, MNAME, LNAME, CONTACT, EMAIL, COMMITTEE, POSITION, USERNAME, PASSWORD) 
+            $sql = "INSERT INTO admins (FNAME, MNAME, LNAME, CONTACT, EMAIL, COMMITTEE, POSITION, USERNAME, PASSWORD) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         }
 
@@ -374,7 +374,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             require_once "config.php";
 
                             // Attempt select query execution
-                            $sql = "SELECT * FROM accounts";
+                            $sql = "SELECT * FROM admins";
                             if ($result = $mysqli->query($sql)) {
                                 if ($result->num_rows > 0) {
                                     echo '<table class="table table-bordered table-striped text-center">';
@@ -572,7 +572,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             require_once "config.php";
 
                             // Prepare a select statement
-                            $sql = "SELECT FNAME, MNAME, LNAME FROM accounts WHERE ID = ?";
+                            $sql = "SELECT FNAME, MNAME, LNAME FROM admins WHERE ID = ?";
                             if ($stmt = $mysqli->prepare($sql)) {
 
                                 // Bind variables to the prepared statement as parameters

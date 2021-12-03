@@ -147,7 +147,7 @@
                             require_once "config.php";
 
                             // Attempt select query execution
-                            $sql = "SELECT * FROM accounts";
+                            $sql = "SELECT * FROM admins";
                             if ($result = $mysqli->query($sql)) {
                                 if ($result->num_rows > 0) {
                                     echo '<table class="table table-bordered table-striped text-center bg-white">';
