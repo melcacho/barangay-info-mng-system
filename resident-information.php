@@ -111,7 +111,7 @@
 
                         <a class="btn btn-success ml-auto mr-0 my-auto" 
                         data-toggle="tooltip"
-                        href="?id=">
+                        onclick="popupOpen()">
                             <i class="fa fa-plus"></i> 
                             New Resident
                         </a>
@@ -226,6 +226,12 @@
                 $('a[aria-expanded=true]').attr('aria-expanded', 'false');
             });
         });
+    </script>
+    
+    <script>
+    function popupOpen() {
+        var addNewResident = window.open("http://localhost/barangay-info-mng-system/resident-add.php", "", "width=1300,height=800");
+    }
     </script>
 </body>
 
