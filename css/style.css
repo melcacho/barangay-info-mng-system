@@ -8026,4 +8026,11 @@ tr.bg-dark {
   background-color: #e9ecef;
   border: .2rem solid black; }
 
+input[type=text], textarea {
+  width: 1000px;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: none; }
+
 /*# sourceMappingURL=style.css.map */
