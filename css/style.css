@@ -8021,4 +8021,9 @@ select.form-control:focus {
 tr.bg-dark {
   color: #e9ecef; }
 
+.image-view {
+  width: 100%;
+  background-color: #e9ecef;
+  border: .2rem solid black; }
+
 /*# sourceMappingURL=style.css.map */

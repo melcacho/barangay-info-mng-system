@@ -230,7 +230,12 @@
     
     <script>
     function popupOpen() {
-        var addNewResident = window.open("http://localhost/barangay-info-mng-system/resident-add.php", "", "width=1300,height=800");
+        var width = window.outerWidth*(4/5);
+        var height = window.outerHeight*(3/4);
+        var left = (screen.width/2)-(width/2);
+        var top = (screen.height/2)-(height/2);
+        var features =' width=' + width + ', height=' + height + ', top=' + top + ', left=' + left + ', resizable=false';
+        var addNewResident = window.open("resident-add.php", "window", features);
     }
     </script>
 </body>

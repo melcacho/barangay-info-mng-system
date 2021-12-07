@@ -250,3 +250,9 @@ select.form-control:focus {
 tr.bg-dark {
     color: $gray-200;
 }
+
+.image-view {
+    width: 100%;
+    background-color: $gray-200;
+    border: .2rem solid black;
+}

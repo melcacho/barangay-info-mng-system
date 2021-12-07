@@ -509,7 +509,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <div class="form-group row">
                         <!-- Committee -->
                             <div class="input-group col-md-6">
-                                <span class="mb-0 mt-auto mx-1">committee: </span>
+                                <span class="mb-0 mt-auto mx-1">Committee: </span>
                                 <select class="form-control" 
                                 aria-label="Default select example" 
                                 name="committee"
