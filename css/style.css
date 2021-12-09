@@ -8024,6 +8024,13 @@ tr.bg-dark {
 .image-view {
   width: 100%;
   background-color: #e9ecef;
-  border: .2rem solid black; }
+  border: .2rem solid black;
+  margin-bottom: 5px; }
 
+input[type=text], textarea {
+  width: 1000px;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: none; } 
 /*# sourceMappingURL=style.css.map */
