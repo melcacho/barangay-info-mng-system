@@ -55,31 +55,24 @@
     <div class="container-fluid">
         <h5>New Resident Registration Form</h5>
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-            <div class="row">   
-                <div class="col-md-4"> 
-                    <img src="assets/barangay-config/sumin.png" class="image-view">
-                    <a type = "submit" class="btn btn-primary ml-auto mr-0 my-auto" style="width: 236px ; height:auto ; margin-top: 200px">
-                        <i class="fa fa-folder"></i> 
-                        Browse
-                        </a>
-                        
-                    <a type = "submit" class="btn btn-primary ml-auto mr-0 my-auto" style="width: 236px ; height: auto ; margin-top: 200px" >
-                        <i class="fa fa-camera"></i> 
-                        Camera
-                    </a>
+            <div class="row">
+                <div class="col-md-4">
+                    <img src="assets/barangay-config/logo.png" class="image-view">
+                    <button type="submit" class="btn btn-block btn-primary">Save changes</button>
+                    <button type="submit" class="btn btn-block btn-primary">Save changes</button>
                 </div>
                 <div class="col-md-8">
                     <!-- INPUT ROW -->
                     <div class="form-group row">
-                        <!-- family-name -->
+                        <!-- last-name -->
                         <div class="input-group col-md-6">
-                            <span class="mb-0 mt-auto mx-1">Family Name: </span>
+                            <span class="mb-0 mt-auto mx-1">Last Name: </span>
                             <input
                                 type="text"
                                 class="form-control <?php echo (!empty($name_err)) ? 'invalid' : ''; ?>"
-                                name="family-name"
+                                name="last-name"
                                 placeholder="<?php echo (!empty($name_err)) ? $name_err : ''; ?>"
-                                value="<?php echo $family_name; ?>"
+                                value="<?php echo $last_name; ?>"
                                 >
                         </div>
                         <!-- birthdate -->
@@ -111,7 +104,7 @@
                             <span class="mb-0 mt-auto mx-1">Civil Status: </span>
                             <select class="form-control" 
                             aria-label="Default select example" 
-                            name="civil-status"
+                            name="committee"
                             required="required">
                             <?php
                                 $a_civil_status = ["Single", "Married", "Separated", "Widowed"];
@@ -137,157 +130,26 @@
                                 value="<?php echo $middle_name; ?>"
                                 >
                         </div>
-                        <!-- gender -->
-                        <div class="input-group col-md-6">
-                        <span class="mb-0 mt-auto mx-1">Gender: </span>
-                            <select class="form-control" 
-                            aria-label="Default select example" 
-                            name="gender"
-                            required="required">
-                            <?php
-                                $a_gender = ["Male", "Female"];
-                                $a_gd_value = ['M', 'FM'];
-                                $i = 0;
-                                foreach($a_gender as $value) {
-                                    echo '<option value="'.$a_gd_value[$i].'" '.(($a_gd_value[$i] == $i++) ? 'selected': '').'>'.$value.'</option>';
-                                }
-                            ?>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
                         <!-- alias -->
                         <div class="input-group col-md-6">
-                            <span class="mb-0 mt-auto mx-1">Alias: </span>
+                            <span class="mb-0 mt-auto mx-1">Alias Name: </span>
                             <input
                                 type="text"
-                                class="form-control <?php echo (!empty($name_err)) ? 'invalid' : ''; ?>"
+                                class="form-control"
                                 name="alias"
-                                placeholder="<?php echo (!empty($name_err)) ? $name_err : ''; ?>"
                                 value="<?php echo $alias; ?>"
                                 >
                         </div>
-                        <!-- voter status -->
-                        <div class="input-group col-md-6">
-                        <span class="mb-0 mt-auto mx-1">Voter Status: </span>
-                            <select class="form-control" 
-                            aria-label="Default select example" 
-                            name="voter-status"
-                            required="required">
-                            <?php
-                                $a_voter_status= ["Yes", "No"];
-                                $a_vs_value = ['Y', 'N'];
-                                $i = 0;
-                                foreach($a_voter_status as $value) {
-                                    echo '<option value="'.$a_vs_value[$i].'" '.(($a_vs_value[$i] == $i++) ? 'selected': '').'>'.$value.'</option>';
-                                }
-                            ?>
-                            </select>
-                        </div>
                     </div>
 
-                    <div class="form-group row">
-                        <!---purok--->
-                        <div class="input-group col-md-6">
-                            <span class="mb-0 mt-auto mx-1">Purok: </span>
-                                <select class="form-control" 
-                                aria-label="Default select example" 
-                                name="purok"
-                                required="required">
-                                <?php
-                                    $a_purok= ["Area_1", "Area_2","Area_3","Area_4"];
-                                    $a_pr_value = ['A1', 'A2', 'A3', 'A4'];
-                                    $i = 0;
-                                    foreach($a_purok as $value) {
-                                        echo '<option value="'.$a_pr_value[$i].'" '.(($a_pr_value[$i] == $i++) ? 'selected': '').'>'.$value.'</option>';
-                                    }
-                                ?>
-                                </select>
-                        </div>
 
-                        <div class="input-group col-md-6">
-                            <!---Occupation--->
-                        <span class="mb-0 mt-auto mx-1">Occupation & Sector: </span>
-                            <input
-                                type="text"
-                                class="form-control <?php echo (!empty($name_err)) ? 'invalid' : ''; ?>"
-                                name="occupation"
-                                placeholder="<?php echo (!empty($name_err)) ? $name_err : ''; ?>"
-                                value="<?php echo $occupation; ?>"
-                                >
-                                <!---Sector--->      
-                            <select class="form-control" 
-                            aria-label="Default select example" 
-                            name="sector"
-                            required="required">
-                            <?php
-                                $a_sector= ["Private", "Public", "Government", "Unemployed", "Out of School Youth (OSY)", "Out of School Children (OSC)", "Person With Disability (PWD)",
-                            "Senior Citizen (SC)", "Overseas Filipino Worker (OFW)", "Solo Parent", "Indigenous People (IP)", "Others"];
-                                $a_st_value = ['PV', 'PB', 'GOV', 'UNEMP', 'OSY', 'OSC', 'PWD', 'SC', 'OFW', 'SP', 'IP', 'OTHERS'];
-                                $i = 0;
-                                foreach($a_ssector as $value) {
-                                    echo '<option value="'.$a_st_value[$i].'" '.(($a_st_value[$i] == $i++) ? 'selected': '').'>'.$value.'</option>';
-                                }
-                            ?>
-                            </select>
-                        </div>
-                    </div>
 
-                    <div class="form-group row">
-                        <!-- nationality -->
-                        <div class="input-group col-md-6">
-                            <span class="mb-0 mt-auto mx-1">Nationality: </span>
-                            <input
-                                type="text"
-                                class="form-control <?php echo (!empty($name_err)) ? 'invalid' : ''; ?>"
-                                name="nationality"
-                                placeholder="<?php echo (!empty($name_err)) ? $name_err : ''; ?>"
-                                value="<?php echo $nationality; ?>"
-                                >
-                        </div>
 
-                        <!-- religion/belief -->
-                        <div class="input-group col-md-6">
-                            <span class="mb-0 mt-auto mx-1">Religion/Belief: </span>
-                            <input
-                                type="text"
-                                class="form-control <?php echo (!empty($name_err)) ? 'invalid' : ''; ?>"
-                                name="religion-belief"
-                                placeholder="<?php echo (!empty($name_err)) ? $name_err : ''; ?>"
-                                value="<?php echo $religion_belief; ?>"
-                                >
-                        </div>
 
-                    </div>    
 
-                    <div class="form-group row">
-                        <!---Place of Birth--->
-                        <div class="input-group col-md-6">
-                            <span class="mb-0 mt-auto mx-1">Place of Birth: </span>
-                            <textarea id="subject" 
-                            name="birthplace"  
-                            style="height:75px"></textarea>
-                        </div>
-
-                        <!---Face Marks--->
-                        <div class="input-group col-md-6">
-                            <span class="mb-0 mt-auto mx-1">Face Marks: </span>
-                            <textarea id="subject" 
-                            name="face-marks" 
-                            style="height:75px"></textarea>
-                        </div>
-
-    
-                    </div>
                 </div>
             </div>
         </form>
-        <hr>
-        <a type = "submit" class="btn btn-success ml-auto mr-0 my-auto" style="float: right" >
-        <i class="fa fa-user-plus"></i> 
-            Save new resident
-        </a>
     </div>
 </body>
 </html>
