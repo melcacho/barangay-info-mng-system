@@ -238,6 +238,21 @@ select.form-control:focus {
     box-shadow: none;
 }
 
+#db-header {
+    background-color: $gray-800;
+    color: #fff;
+}
+
+#db-header input:not([type="file"]),
+#db-header select.form-control{
+    color: #fff;
+}
+
+#db-header select.form-control {
+    padding-bottom: 0;
+    background-color: $gray-800 !important;
+}
+
 .form-control.invalid::placeholder {
     color: $danger !important;
     opacity: 1;
@@ -257,6 +272,6 @@ tr.bg-dark {
     border: .2rem solid black;
 }
 
-td {
+td, th {
     white-space: nowrap;
 }

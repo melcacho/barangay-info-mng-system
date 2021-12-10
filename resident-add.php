@@ -23,10 +23,6 @@
 
     $name_err = $spouse_name_err = $contact_number_one_err = $contact_number_two_err = "";
 
-    echo '<script>
-    alert("'.date("Y/m/d").', '.date("h:i:sa").'");
-    </script>';
-
     if($_SERVER["REQUEST_METHOD"] == "POST") {
         //validate name
         if (!preg_match('/^[a-zA-Z ]+$/', trim($_POST["first-name"])) ||
@@ -144,7 +140,7 @@
                 if ($stmt->execute()) {
                     echo '<script>
                     alert("Resident Registered");
-                    window.close();;
+                    window.close();
                     </script>';
                 } else {
                     echo '<script>
@@ -270,7 +266,7 @@
                         </div>
                         <!-- sex -->
                         <div class="input-group col-md-6">
-                        <span class="mb-0 mt-auto mx-1">Sex: </span>
+                            <span class="mb-0 mt-auto mx-1">Sex: </span>
                             <select class="form-control" 
                                 name="sex"
                                 required>
@@ -515,7 +511,7 @@
             <hr>
 
             <div class="text-right">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" onclick="window.close()">Close</button>
                 <button type="submit" class="btn btn-success">Save changes</button>
             </div>
         </form>

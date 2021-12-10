@@ -3,6 +3,23 @@
     $brgy_name = fgets($myfile);
     $brgy_address = fgets($myfile);
     fclose($myfile);
+
+    $a_civil_status = ["Single", "Married", "Separated", "Widowed"];
+    $a_cs_value = ['SG', 'MR', 'SP', 'WD'];
+    $a_sector= ["Private", "Public", "Government", "Unemployed", "Out of School Youth (OSY)", "Out of School Children (OSC)", "Person With Disability (PWD)",
+    "Senior Citizen (SC)", "Overseas Filipino Worker (OFW)", "Solo Parent", "Indigenous People (IP)", "Others"];
+    $a_st_value = ['PRV', 'PUB', 'GOV', 'UEP', 'OSY', 'OSC', 'PWD', 'SEN', 'OFW', 'SPA', 'IDP', 'OTH'];
+
+    $category = $search = "";
+
+    if(isset($_POST["search"])) {
+        $search = trim($_POST["search"]);
+        $category = trim($_POST["category"]);
+    }
+
+    if(isset($_POST["reset"])) {
+        $category = $search = "";
+    }
 ?>
 
 <!DOCTYPE html>
@@ -55,18 +72,6 @@
                     </a>
                 </li>
                 <li>
-                    <a href="blotter-records.php">
-                        <span class="icon"><i  class="fas fa-archive"></i></span>
-                        Blotter Records
-                    </a>
-                </li>
-                <li>
-                    <a href="settlement-schedules.php">
-                        <span class="icon"><i  class="fas fa-calendar"></i></span>
-                        Settlement Schedules
-                    </a>
-                </li>
-                <li>
                     <a href="cert-issuance.php">
                         <span class="icon"><i  class="fas fa-certificate"></i></span>
                         Certificatie Issuance
@@ -108,14 +113,50 @@
                 <div class="container-xl">
                     <div class="mt-5 mb-3 clearfix d-flex">
                         <h2 class="my-auto">Resident Information Management</h2>
-
-                        <a class="btn btn-success ml-auto mr-0 my-auto" 
-                        data-toggle="tooltip"
-                        onclick="popupOpen()">
-                            <i class="fa fa-plus"></i> 
-                            New Resident
-                        </a>
                     </div>
+
+                    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" id="db-header"
+                        class="py-2">
+                        <div class="input-group">
+                            <!-- search -->
+                            <div class="input-group col-sm-3 mb-2">
+                                <span class="mb-0 mt-auto mx-1">Search: </span>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    name="search"
+                                    maxlength="50"
+                                    title="Search"
+                                    value="<?php echo $search?>"
+                                    required>
+                            </div>
+                            <!-- category -->
+                            <div class="input-group col-sm-3 mb-2">
+                                <select class="form-control" 
+                                    name="category"
+                                    required>
+                                    <option value="0" <?php echo ($category == "0") ? 'selected' : ''?>>Last Name</option>
+                                    <option value="1" <?php echo ($category == "1") ? 'selected' : ''?>>First Name</option>
+                                    <option value="2" <?php echo ($category == "2") ? 'selected' : ''?>>Alias</option>
+                                </select>
+                            </div>
+
+                            <div class="col-sm-2">
+                                <button type="submit" class="btn btn-secondary"><i class="fas fa-search"></i></button>
+                                <button name="reset" class="btn btn-secondary"
+                                    <?php echo (empty($search)) ? "disabled" : ""?>><i class="fas fa-sync"></i></button>
+                            </div>
+
+                            <div class="col-sm-4 text-right">
+                                <a class="btn btn-success" 
+                                    data-toggle="tooltip"
+                                    onclick="popupOpen()">
+                                    <i class="fa fa-plus"></i> 
+                                    New Resident
+                                </a>
+                            </div>
+                        </div>
+                    </form>
 
                     <div class="overflow-auto">
                         <?php
@@ -133,31 +174,46 @@
                             }
                             fclose($myfile);
 
-                            // Include config file
                             require_once "config.php";
 
-                            // Attempt select query execution
-                            $sql = "SELECT * FROM residents";
+                            if(!empty($search)) {
+                                switch($category) {
+                                    case 0: 
+                                        $sql = "SELECT * FROM residents WHERE LNAME = '".$search."'";
+                                        break;
+                                    case 1: 
+                                        $sql = "SELECT * FROM residents WHERE FNAME = '".$search."'";
+                                        break;
+                                    case 2: 
+                                        $sql = "SELECT * FROM residents WHERE ALIAS = '".$search."'";
+                                        break;
+                                }
+                            } else {
+                                $sql = "SELECT * FROM residents";
+                            }
+
                             if ($result = $mysqli->query($sql)) {
                                 if ($result->num_rows > 0) {
-                                    echo '<table class="table table-bordered table-striped text-center">';
+                                    echo '<table class="table table-bordered table-striped text-center bg-white">';
                                     echo "<thead>";
-                                    echo "<tr class=\"bg-dark\">";
+                                    echo "<tr>";
                                     echo "<th>Family Name</th>";
                                     echo "<th>First Name</th>";
                                     echo "<th>Middle Name</th>";
                                     echo "<th>Alias</th>";
                                     echo "<th>Face Marks</th>";
-                                    echo "<th>Birth Date</th>";
+                                    echo "<th>Birth Date (YYYY-MM-DD)</th>";
                                     echo "<th>Birth Place</th>";
                                     echo "<th>Sex</th>";
                                     echo "<th>Civil Status</th>";
                                     echo "<th>Nationality</th>";
                                     echo "<th>Religion / Belief</th>";
                                     echo "<th>Occupation</th>";
+                                    echo "<th>Sector</th>";
                                     echo "<th>Spouse's Name</th>";
                                     echo "<th>Spouse's Occupation</th>";
                                     echo "<th>Voter Status</th>";
+                                    echo "<th>Active Voter</th>";
                                     echo "<th>Action</th>";
                                     echo "</tr>";
                                     echo "</thead>";
@@ -172,13 +228,15 @@
                                         echo "<td class='w-100'>" . $row['BIRTH_DATE'] . "</td>";
                                         echo "<td>" . $row['BIRTH_PLACE'] . "</td>";
                                         echo "<td>" . $row['SEX'] . "</td>";
-                                        echo "<td>" . $row['CIVIL_STATUS'] . "</td>";
+                                        echo "<td>" . $a_civil_status[array_search($row['CIVIL_STATUS'], $a_cs_value)]. "</td>";
                                         echo "<td>" . $row['NATIONALITY'] . "</td>";
                                         echo "<td>" . $row['BELIEF'] . "</td>";
                                         echo "<td>" . $row['OCCUPATION'] . "</td>";
+                                        echo "<td>" . $a_sector[array_search($row['SECTOR'], $a_st_value)]. "</td>";
                                         echo "<td>" . $row['SPOUSE_NAME'] . "</td>";
                                         echo "<td>" . $row['SPOUSE_OCCUPATION'] . "</td>";
-                                        echo "<td>" . $row['VOTER_STATUS'] . "</td>";
+                                        echo "<td>" . (($row['VOTER_STATUS']) ? "Yes" : "No"). "</td>";
+                                        echo "<td>" . (($row['VOTER_ACTIVE']) ? "Yes" : "No"). "</td>";
                                         echo "<td>";
                                         echo '<a href="?id=' . $row['RESIDENT_ID'] . '" class="mr-3 action" title="Update Record" data-toggle="tooltip"><span class="fas fa-pencil-alt"></span></a>';
                                         echo '<a href="?id=' . $row['RESIDENT_ID'] . '&delete=0" class="action" title="Delete Record" data-toggle="tooltip"><span class="fa fa-trash"></span></a>';

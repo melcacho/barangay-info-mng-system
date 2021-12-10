@@ -8011,6 +8011,18 @@ select.form-control:focus {
   -webkit-box-shadow: none;
   box-shadow: none; }
 
+#db-header {
+  background-color: #343a40;
+  color: #fff; }
+
+#db-header input:not([type="file"]),
+#db-header select.form-control {
+  color: #fff; }
+
+#db-header select.form-control {
+  padding-bottom: 0;
+  background-color: #343a40 !important; }
+
 .form-control.invalid::placeholder {
   color: #dc3545 !important;
   opacity: 1; }
@@ -8026,7 +8038,7 @@ tr.bg-dark {
   background-color: #e9ecef;
   border: .2rem solid black; }
 
-td {
+td, th {
   white-space: nowrap; }
 
 /*# sourceMappingURL=style.css.map */

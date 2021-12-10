@@ -1,246 +1,167 @@
 <?php
-// Include config file
-require_once "config.php";
+    // Include config file
+    require_once "config.php";
 
-// Define variables and initialize with empty values
-$first_name = $middle_name = $last_name = $contact_number = $email = $username = $password = "";
-$name_err = $contact_number_err = $email_err = $password_err = $id = "";
+    // Define variables and initialize with empty values
+    $first_name = $middle_name = $last_name = $res_id = $username = $password = $admin_id = $committee = $position = "";
+    $modal_create = $modal_delete = $edit = 0;
 
-$modal_view = $committee = $position = $delete_modal_view = 0;
+    $myfile = fopen("assets/barangay-config/brgy-details.txt", "r") or die("Unable to open file!");
+    $brgy_name = fgets($myfile);
+    $brgy_address = fgets($myfile);
+    fclose($myfile);
 
-$myfile = fopen("assets/barangay-config/brgy-details.txt", "r") or die("Unable to open file!");
-$brgy_name = fgets($myfile);
-$brgy_address = fgets($myfile);
-fclose($myfile);
+    if(isset($_GET["id"]) && !empty($_GET["id"])) {
+        $admin_id = trim($_GET["id"]);
+    } elseif(isset($_GET["id"])) {
+        $modal_create = 1;
+    }
 
-if (isset($_GET["id"]) && !empty(trim($_GET["id"])) && trim($_GET["id"]) != '') {
-    // Get URL parameter
-    $id = trim($_GET["id"]);
-}
+    if(isset($_GET["del"]) && $_GET["del"]) {
+        $modal_delete = 1;
+    }
 
-//Delete Record
-if (isset($_GET["delete"]) && trim($_GET["delete"]) != "" && isset($_GET["id"])) {
-    $delete = trim($_GET["delete"]);
-    if($delete) {
-        // Prepare a delete statement
-        $sql = "DELETE FROM admins WHERE ID = ?";
+    if(isset($_GET["ed"]) && $_GET["ed"]) {
+        $modal_create = 1;
+        $edit = 1;
+
+        $sql = "SELECT * FROM admins WHERE ADMIN_ID = ".$admin_id."";
+        if ($result = $mysqli->query($sql)) {
+            if($result->num_rows > 0) {
+                if($row = $result->fetch_array()) {
+                    $res_id = $row["RESIDENT_ID"];
+                    $username = $row["USERNAME"];
+                    $committee = $row["COMMITTEE"];
+                    $position = $row["POSITION"];
+                }
+            } else {
+                $res_id_err = "Nonexistent Resident ID";
+            }
+        }
+    }
+    
+    if(isset($_POST["delete"])) {
+        $sql = "DELETE FROM admins WHERE ADMIN_ID = ?";
 
         if ($stmt = $mysqli->prepare($sql)) {
-            // Bind variables to the prepared statement as parameters
             $stmt->bind_param("i", $param_id);
 
-            // Set parameters
-            $param_id = trim($_GET["id"]);
+            $param_id = trim($_POST["id"]);
 
-            // Attempt to execute the prepared statement
             if ($stmt->execute()) {
-                $delete_modal_view = 0;
+                echo '<script>
+                alert("Record Deleted");
+                </script>';
+                $modal_delete = 0;
             } else {
                 echo '<script>
                 alert("Delete Sequence Error: Database Access Error");
                 </script>';
             }
         }
-    } else {
-        $delete_modal_view = 1;
     }
-} elseif (isset($_GET["id"]) && !empty(trim($_GET["id"])) && trim($_GET["id"]) != '') {
-    // Prepare a select statement
-    $sql = "SELECT * FROM admins WHERE ID = ?";
-    if ($stmt = $mysqli->prepare($sql)) {
-        // Bind variables to the prepared statement as parameters
-        $stmt->bind_param("i", $param_id);
 
-        // Set parameters
-        $param_id = $id;
-
-        // Attempt to execute the prepared statement
-        if ($stmt->execute()) {
-            $result = $stmt->get_result();
-
-            if ($result->num_rows == 1) {
-                /* Fetch result row as an associative array. Since the result set
-                contains only one row, we don't need to use while loop */
-                $row = $result->fetch_array(MYSQLI_ASSOC);
-
-                // Retrieve individual field value
-                $first_name = $row["FNAME"];
-                $middle_name = $row["MNAME"];
-                $last_name = $row["LNAME"];
-                $contact_number = $row["CONTACT"];
-                $email = $row["EMAIL"];
-                $committee = $row["COMMITTEE"];
-                $position = $row["POSITION"];
-                
-                $modal_view = 1;
+    if(isset($_POST["create"]) || isset($_POST["edit"])) {
+        $sql = "SELECT * FROM admins WHERE USERNAME = '".strtoupper(trim($_POST["username"]))."'";
+        if(!preg_match('/^[a-zA-Z ]+$/', trim($_POST["username"]))) {
+            $username_err = "Must only contain letters";
+        } elseif ($result = $mysqli->query($sql)) {
+            if($result->num_rows > 0) {
+                if($row = $result->fetch_array()) {
+                    if($_POST["id"] != $row["ADMIN_ID"]) {
+                        $username_err = "Username Already Taken";
+                    } else {
+                        $username = trim($_POST["username"]);
+                    }
+                }
             } else {
-                echo '<script>
-                alert("Fetch Sequence Error: More than one set of data");
-                </script>';
+                $username = trim($_POST["username"]);
             }
         } else {
-            echo '<script>
-            alert("Fetch Sequence Error: Database Access Error");
-            </script>';
+            $username = trim($_POST["username"]);
         }
-    }
-} elseif(isset($_GET["id"]) && empty(trim($_GET["id"]))) {
-    $modal_view = 1;
-}
 
-// Processing form data when form is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if(isset($_POST["create"])) {
+            $sql = "SELECT * FROM admins WHERE RESIDENT_ID = ?";
+            if($stmt = $mysqli->prepare($sql)) {
+                $stmt->bind_param("i", $param_id);
+                $param_id = trim($_POST["res-id"]);
 
-    if (isset($_POST["id"]) && !empty($_POST["id"]) && $_POST["id"] != '') {
-        // Get hidden input value
-        $id = $_POST["id"];
-    }
-
-    // Validate name
-    if (empty(trim($_POST["first-name"])) || empty(trim($_POST["last-name"]))) {
-        $name_err = "Must fill";
-    } elseif (!preg_match('/^[a-zA-Z ]+$/', trim($_POST["first-name"])) ||
-    !preg_match('/^[a-zA-Z ]+$/', trim($_POST["last-name"])) ||
-    (!empty(trim($_POST["middle-name"])) && !preg_match('/^[a-zA-Z ]+$/', trim($_POST["middle-name"])))) {
-        $name_err = "Must only contain letters";
-    } else {
-        $first_name = trim($_POST["first-name"]);
-        $middle_name = trim($_POST["middle-name"]);
-        $last_name = trim($_POST["last-name"]);
-    }
-
-    // Validate contact number
-    if(empty(trim($_POST["contact-number"]))) {
-        $contact_number_err = "Must fill";
-    } elseif(strlen(trim($_POST["contact-number"])) < 11) {
-        $contact_number_err = "Must be 11 digits";
-    } elseif(substr($_POST["contact-number"], 0, 2) != "09") {
-        $contact_number_err = "Must start with 09";
-    } else {
-        $contact_number = trim($_POST["contact-number"]);
-    }
-
-    // Validate email
-    if(empty(trim($_POST["email"]))) {
-        $email_err = "Must fill";
-    } elseif(!empty($id)) {
-        $email = trim($_POST["email"]);
-    } else {
-        $sql = "SELECT ID FROM admins WHERE EMAIL = ?";
-
-        if($stmt = $mysqli->prepare($sql)) {
-            $stmt->bind_param("s", $param_email);
-            $param_email = trim($_POST["email"]);
-
-            if($stmt->execute()) {
-                $stmt->store_result();
-
-                if($stmt->num_rows > 0) {
-                    $email_err = "Already taken";
-                } else {
-                    $email = trim($_POST["email"]);
+                if($stmt->execute()) {
+                    $stmt->store_result();
+                    if($stmt->num_rows > 0) {
+                        $res_id_err = "Already an Admin";
+                    } else {
+                        $sql = "SELECT * FROM residents WHERE RESIDENT_ID = ".$param_id."";
+                        if ($result = $mysqli->query($sql)) {
+                            if($result->num_rows > 0) {
+                                if($row = $result->fetch_array()) {
+                                    $res_id = trim($_POST["res-id"]);
+                                    $last_name = $row["LNAME"];
+                                    $first_name = $row["FNAME"];
+                                    $middle_name = $row["MNAME"];
+                                }
+                            } else {
+                                $res_id_err = "Nonexistent Resident ID";
+                            }
+                        }
+                    }
                 }
             }
-        } else {
-            echo '<script>
-            alert("Data Validation Error: Database Access Error");
-            </script>';
-        }
-    }
-
-    // Validate password
-    if(empty(trim($_POST["password"]))) {
-        $password_err = "Must Fill";
-    } else {
-        $password = trim($_POST["password"]);
-    }
-    
-    $words = explode(" ", $first_name);
-    $acronym = "";
-    
-    foreach ($words as $w) {
-      $acronym .= $w[0];
-    }
-
-    $username = $last_name . $acronym;
-    // Validate username
-    $sql = "SELECT ID FROM admins WHERE USERNAME = ?";
-    if(empty($id) && $stmt = $mysqli->prepare($sql)) {
-        $stmt->bind_param("s", $param_username);
-        $param_username = $username;
-
-        if($stmt->execute()) {
-            $stmt->store_result();
-
-            if($stmt->num_rows > 0) {
-                $name_err = "Name already registered";
-                $first_name = $middle_name = $last_name = "";
-            }
-        }
-    } else {
-    }
-
-    $committee = trim($_POST["committee"]);
-    $position = trim($_POST["position"]);
-
-    // Check input errors before inserting in database
-    if (empty($name_err) && empty($contact_number_err) && empty($email_err) && empty($password_err)) {
-
-        if(!empty($id)) {
-            // Prepare an update statement
-            $sql = "UPDATE admins SET FNAME=?, MNAME=?, LNAME=?, CONTACT=?, EMAIL=?, COMMITTEE=?, POSITION=?, 
-            USERNAME=?, PASSWORD=? WHERE ID=?";
-        } else {
-            // Prepare an insert statement
-            $sql = "INSERT INTO admins (FNAME, MNAME, LNAME, CONTACT, EMAIL, COMMITTEE, POSITION, USERNAME, PASSWORD) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         }
 
-        if ($stmt = $mysqli->prepare($sql)) {
-            // Bind variables to the prepared statement as parameters
-            if(!empty($id)) {
-                $stmt->bind_param("sssssssssi", $param_first_name, $param_middle_name, $param_last_name,
-                $param_contact_number, $param_email, $param_committee, $param_position, $param_username, 
-                $param_password, $param_id);
+        $committee = trim($_POST["committee"]);
+        $position = trim($_POST["position"]);
+        if(empty($username_err) && empty($res_id_err)) {
+            $password = trim($_POST["password"]);
 
-                $param_id = $id;
+            if(isset($admin_id)) {
+                $sql = "UPDATE admins SET COMMITTEE=?, POSITION=?, USERNAME=?, PASSWORD=? WHERE ADMIN_ID=?";
             } else {
-                $stmt->bind_param("sssssssss", $param_first_name, $param_middle_name, $param_last_name,
-                $param_contact_number, $param_email, $param_committee, $param_position, $param_username, $param_password);
-
+                $sql = "INSERT INTO admins (LNAME, FNAME, MNAME, COMMITTEE, POSITION, USERNAME, PASSWORD, RESIDENT_ID) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             }
-            // Set parameters
-            $param_first_name = strtoupper($first_name);
-            $param_middle_name = strtoupper($middle_name);
-            $param_last_name = strtoupper($last_name);
-            $param_contact_number = $contact_number;
-            $param_email = strtoupper($email);
-            $param_username = strtolower($username); 
-            $param_password = password_hash($password, PASSWORD_DEFAULT);
-            $param_committee = $committee;
-            $param_position = $position;
 
-            // Attempt to execute the prepared statement
-            if ($stmt->execute()) {
-                $first_name = $middle_name = $last_name = $contact_number = $email = $username = $password = "";
-                $name_err = $contact_number_err = $email_err= $password_err = "";
-                                
-                $modal_view = $committee = $position = 0;
+
+            if ($stmt = $mysqli->prepare($sql)) {
+                if(isset($admin_id)) {
+                    $stmt->bind_param("ssssi", $param_committee, $param_position, $param_username, 
+                    $param_password, $_POST["id"]);
+                } else {
+                    $stmt->bind_param("ssssssss", $param_last_name, $param_first_name, $param_middle_name, 
+                    $param_committee, $param_position, $param_username, $param_password, $param_id);
+                    $param_last_name = strtoupper($last_name);
+                    $param_first_name = strtoupper($first_name);
+                    $param_middle_name = strtoupper($middle_name);
+                }
+
+                $param_committee = $committee;
+                $param_position = $position;
+                $param_username = strtoupper($username);
+                $param_password = password_hash($password, PASSWORD_DEFAULT);
+
+                if ($stmt->execute()) {
+                    $first_name = $middle_name = $last_name = $res_id = $username = $password = $committee = 
+                    $position = $admin_id = "";
+                    $modal_create = 0;
+                    echo '<script>
+                    alert("Admin Added");
+                    </script>';
+                } else {
+                    echo '<script>
+                    alert("Push Sequence Error: Database Access Error");
+                    </script>';
+                }
             } else {
                 echo '<script>
                 alert("Push Sequence Error: Database Access Error");
                 </script>';
             }
         } else {
-            echo '<script>
-            alert("Push Sequence Error: Database Parameters Error");
-            </script>';
+            $modal_create = 1;
         }
-    } else {
-        $modal_view = 1;
     }
-    
-}
+
 ?>
 
 <!DOCTYPE html>
@@ -289,18 +210,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <a href="resident-information.php">
                         <span class="icon"><i  class="fas fa-users"></i></span>
                         Resident Information
-                    </a>
-                </li>
-                <li>
-                    <a href="blotter-records.php">
-                        <span class="icon"><i  class="fas fa-archive"></i></span>
-                        Blotter Records
-                    </a>
-                </li>
-                <li>
-                    <a href="settlement-schedules.php">
-                        <span class="icon"><i  class="fas fa-calendar"></i></span>
-                        Settlement Schedules
                     </a>
                 </li>
                 <li>
@@ -381,10 +290,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     echo "<thead>";
                                     echo "<tr class=\"bg-dark\">";
                                     echo "<th>Full Name</th>";
+                                    echo "<th>Username</th>";
                                     echo "<th>Committee</th>";
                                     echo "<th>Position</th>";
-                                    echo "<th>Email</th>";
-                                    echo "<th>Contact</th>";
                                     echo "<th>Action</th>";
                                     echo "</tr>";
                                     echo "</thead>";
@@ -392,13 +300,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     while ($row = $result->fetch_array()) {
                                         echo "<tr>";
                                         echo "<td>" . $row['LNAME'] . ', ' . $row['FNAME'] . ' ' . $row['MNAME'][0] . ".</td>";
+                                        echo "<td>" . $row['USERNAME'] . "</td>";
                                         echo "<td>" . $a_committee[$row['COMMITTEE']] . "</td>";
                                         echo "<td>" . $a_position[$row['POSITION']] . "</td>";
-                                        echo "<td>" . $row['EMAIL'] . "</td>";
-                                        echo "<td>" . $row['CONTACT'] . "</td>";
                                         echo "<td>";
-                                        echo '<a href="?id=' . $row['ID'] . '" class="mr-3 action" title="Update Record" data-toggle="tooltip"><span class="fas fa-pencil-alt"></span></a>';
-                                        echo '<a href="?id=' . $row['ID'] . '&delete=0" class="action" title="Delete Record" data-toggle="tooltip"><span class="fa fa-trash"></span></a>';
+                                        echo '<a href="?id=' . $row['ADMIN_ID'] . '&ed=1" class="mr-3 action" title="Update Record" data-toggle="tooltip"><span class="fas fa-pencil-alt"></span></a>';
+                                        echo '<a href="?id=' . $row['ADMIN_ID'] . '&del=1" class="action" title="Delete Record" data-toggle="tooltip"><span class="fa fa-trash"></span></a>';
                                         echo "</td>";
                                         echo "</tr>";
                                     }
@@ -437,118 +344,87 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="modal-body">
                     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                         <div class="form-group row">
-                            <!-- first-name -->
-                            <div class="input-group col-xl-6">
-                                <span class="mb-0 mt-auto mx-1">First Name: </span>
-                                <input
-                                    type="text"
-                                    class="form-control <?php echo (!empty($name_err)) ? 'invalid' : ''; ?>"
-                                    name="first-name"
-                                    placeholder="<?php echo (!empty($name_err)) ? $name_err : ''; ?>"
-                                    value="<?php echo $first_name; ?>"
-                                    >
+                            <!-- resident id -->
+                            <div class="input-group col-xl-4">
+                                <span class="mb-0 mt-auto mx-1">Resident ID: </span>
+                                <input type="text"
+                                    class="form-control <?php echo (!empty($res_id_err)) ? 'invalid' : ''; ?>"
+                                    name="res-id"
+                                    placeholder="<?php echo (!empty($res_id_err)) ? $res_id_err : ''; ?>"
+                                    maxlength="6"
+                                    onkeypress="if(isNaN(String.fromCharCode(event.keyCode))) return false;"
+                                    value="<?php echo $res_id; ?>"
+                                    <?php echo ($edit) ? "disabled" : ""?>
+                                    required>
                             </div>
                             <!-- middle-name -->
-                            <div class="input-group col-xl-3">
-                                <span class="mb-0 mt-auto mx-1">Middle Name: </span>
-                                <input
-                                    type="text"
-                                    class="form-control <?php echo (!empty($name_err)) ? 'invalid' : ''; ?>"
-                                    name="middle-name"
-                                    placeholder="<?php echo (!empty($name_err)) ? $name_err : ''; ?>"
-                                    value="<?php echo $middle_name; ?>"
-                                    >
+                            <div class="input-group col-xl-4">
+                                <span class="mb-0 mt-auto mx-1">Username: </span>
+                                <input type="text"
+                                    class="form-control <?php echo (!empty($username_err)) ? 'invalid' : ''; ?>"
+                                    name="username"
+                                    placeholder="<?php echo (!empty($username_err)) ? $username_err : ''; ?>"
+                                    value="<?php echo $username; ?>"
+                                    required>
                             </div>
-                            <!-- last-name -->
-                            <div class="input-group col-xl-3">
-                                <span class="mb-0 mt-auto mx-1">Last Name: </span>
-                                <input
-                                    type="text"
-                                    class="form-control <?php echo (!empty($name_err)) ? 'invalid' : ''; ?>"
-                                    name="last-name"
-                                    placeholder="<?php echo (!empty($name_err)) ? $name_err : ''; ?>"
-                                    value="<?php echo $last_name; ?>"
-                                    >
-                            </div>
-                        </div>
-                        
-                        <div class="form-group row">
-                        <!-- contact-number -->
-                            <div class="input-group col-md-4">
-                                <span class="mb-0 mt-auto mx-1">Contact Number: </span>
-                                <input
-                                type="text"
-                                class="form-control <?php echo (!empty($contact_number_err)) ? 'invalid' : ''; ?>"
-                                name="contact-number"
-                                placeholder="<?php echo (!empty($contact_number_err)) ? $contact_number_err : ''; ?>"
-                                maxlength="11"
-                                onkeypress="if(isNaN(String.fromCharCode(event.keyCode))) return false;"
-                                value="<?php echo $contact_number; ?>">
-                            </div>
-                        <!-- email -->
-                            <div class="input-group col-md-4">
-                                <span class="mb-0 mt-auto mx-1">Email: </span>
-                                <input 
-                                type="email"
-                                class="form-control <?php echo (!empty($email_err)) ? 'invalid' : ''; ?>"
-                                name="email"
-                                placeholder="<?php echo (!empty($email_err)) ? $email_err : ''; ?>"
-                                value="<?php echo $email; ?>">
-                            </div>
-                        <!-- password -->
+                            <!-- password -->
                             <div class="input-group col-md-4">
                                 <span class="mb-0 mt-auto mx-1">Password: </span>
-                                <input 
-                                type="password"
-                                class="form-control <?php echo (!empty($password_err)) ? 'invalid' : ''; ?>" 
-                                name="password"
-                                placeholder="<?php echo (!empty($password_err)) ? $password_err : ''; ?>">
-                            </div>
-                        </div>
-                        
-                        <div class="form-group row">
-                        <!-- Committee -->
-                            <div class="input-group col-md-6">
-                                <span class="mb-0 mt-auto mx-1">Committee: </span>
-                                <select class="form-control" 
-                                aria-label="Default select example" 
-                                name="committee"
-                                required="required">
-                                <?php
-                                    $myfile = fopen("assets/barangay-config/committee.txt", "r") or die("Unable to open file!");
-                                    $i = 0;
-                                    // Output one character until end-of-file
-                                    while(!feof($myfile)) {
-                                        echo '<option value="'.$i.'" '.(($committee == $i++) ? 'selected': '').'>'.fgets($myfile).'</option>';
-                                    }
-                                    fclose($myfile);
-                                ?>
-                                </select>
-                            </div>
-                        <!-- Position -->
-                            <div class="input-group col-md-6">
-                                <span class="mb-0 mt-auto mx-1">Position: </span>
-                                <select class="form-control" 
-                                aria-label="Default select example" 
-                                name="position"
-                                required="required">
-                                <?php
-                                    $myfile = fopen("assets/barangay-config/position.txt", "r") or die("Unable to open file!");
-                                    $i = 0;
-                                    // Output one character until end-of-file
-                                    while(!feof($myfile)) {
-                                        echo '<option value="'.$i.'" '.(($position == $i++) ? 'selected': '').'>'.fgets($myfile).'</option>';
-                                    }
-                                    fclose($myfile);
-                                ?>
-                                </select>
+                                <input type="password"
+                                    class="form-control <?php echo (!empty($password_err)) ? 'invalid' : ''; ?>" 
+                                    name="password"
+                                    placeholder="<?php echo (!empty($password_err)) ? $password_err : ''; ?>"
+                                    required>
                             </div>
                         </div>
 
-                        <input type="hidden" name="id" value="<?php echo $id; ?>" />
+                        <div class="form-group row">
+                            <!-- Committee -->
+                            <div class="input-group col-md-6">
+                                <span class="mb-0 mt-auto mx-1">Committee: </span>
+                                <select class="form-control" 
+                                    aria-label="Default select example" 
+                                    name="committee"
+                                    required>
+                                    <option value='' hidden selected>Select</option>
+                                    <?php
+                                        $myfile = fopen("assets/barangay-config/committee.txt", "r") or die("Unable to open file!");
+                                        $i = 0;
+                                        // Output one character until end-of-file
+                                        while(!feof($myfile)) {
+                                            echo '<option value="'.$i.'" '.(($committee == $i++) ? 'selected': '').'>'.fgets($myfile).'</option>';
+                                        }
+                                        fclose($myfile);
+                                    ?>
+                                </select>
+                            </div>
+                            <!-- Position -->
+                            <div class="input-group col-md-6">
+                                <span class="mb-0 mt-auto mx-1">Position: </span>
+                                <select class="form-control" 
+                                    aria-label="Default select example" 
+                                    name="position"
+                                    required>
+                                    <option value='' hidden selected>Select</option>
+                                    <?php
+                                        $myfile = fopen("assets/barangay-config/position.txt", "r") or die("Unable to open file!");
+                                        $i = 0;
+                                        // Output one character until end-of-file
+                                        while(!feof($myfile)) {
+                                            echo '<option value="'.$i.'" '.(($position == $i++) ? 'selected': '').'>'.fgets($myfile).'</option>';
+                                        }
+                                        fclose($myfile);
+                                    ?>
+                                    </select>
+                            </div>
+                        </div>
+
+                        <input type="hidden" name="id" value="<?php echo (isset($admin_id)) ? $admin_id : '';?>" />
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Save changes</button>
+                            <button name="<?php echo ($edit) ? "edit" : "create"?>"
+                                type="submit" class="btn btn-primary">
+                                <?php echo ($edit) ? "Update" : "Add"?></button>
                         </div>
                     </form>
                 </div>
@@ -568,17 +444,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="modal-body mx-auto">
                     <h4>Delete data of</h4>
                     <?php 
-                        if($delete_modal_view) {
+                        if($modal_delete) {
                             require_once "config.php";
 
                             // Prepare a select statement
-                            $sql = "SELECT FNAME, MNAME, LNAME FROM admins WHERE ID = ?";
+                            $sql = "SELECT FNAME, MNAME, LNAME FROM admins WHERE ADMIN_ID = ?";
                             if ($stmt = $mysqli->prepare($sql)) {
 
                                 // Bind variables to the prepared statement as parameters
                                 $stmt->bind_param("i", $param_id);
                                 // Set parameters
-                                $param_id = $id;
+                                $param_id = $admin_id;
 
                                 // Attempt to execute the prepared statement
                                 if ($stmt->execute()) {
@@ -606,9 +482,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         // Close connection
                         $mysqli->close();
                     ?>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal" title="Close">Close</button>
-                    <a href="?id=<?php echo $id?>&delete=1" class="btn btn-danger" title="Delete Record" data-toggle="tooltip">Confirm</a>
-                    <input type="hidden" name="id" value="<?php echo $id; ?>" />
+
+                    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+                        <input type="hidden" name="id" value="<?php echo $admin_id;?>" />
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" title="Close">Close</button>
+                        <button name="delete" type="submit" class="btn btn-danger" title="Delete Record">Confirm</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -636,9 +515,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             });
         });
 
-        <?php echo ($modal_view) ? '$(document).ready(function(){
+        <?php echo ($modal_create) ? '$(document).ready(function(){
             $(\'#create_modal\').modal(\'show\');});' : ''; ?>
-        <?php echo ($delete_modal_view) ? '$(document).ready(function(){
+        <?php echo ($modal_delete) ? '$(document).ready(function(){
             $(\'#delete_modal\').modal(\'show\');});' : ''; ?>
     </script>
 </body>

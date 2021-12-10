@@ -62,18 +62,6 @@
                     </a>
                 </li>
                 <li>
-                    <a href="blotter-records.php">
-                        <span class="icon"><i  class="fas fa-archive"></i></span>
-                        Blotter Records
-                    </a>
-                </li>
-                <li>
-                    <a href="settlement-schedules.php">
-                        <span class="icon"><i  class="fas fa-calendar"></i></span>
-                        Settlement Schedules
-                    </a>
-                </li>
-                <li>
                     <a href="cert-issuance.php">
                         <span class="icon"><i  class="fas fa-certificate"></i></span>
                         Certificatie Issuance
