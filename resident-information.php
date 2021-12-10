@@ -169,19 +169,19 @@
                                         echo "<td>" . $row['MNAME'] . "</td>";
                                         echo "<td>" . $row['ALIAS'] . "</td>";
                                         echo "<td>" . $row['FACE_MARKS'] . "</td>";
-                                        echo "<td>" . $row['BIRTH_DATE'] . "</td>";
+                                        echo "<td class='w-100'>" . $row['BIRTH_DATE'] . "</td>";
                                         echo "<td>" . $row['BIRTH_PLACE'] . "</td>";
                                         echo "<td>" . $row['SEX'] . "</td>";
                                         echo "<td>" . $row['CIVIL_STATUS'] . "</td>";
                                         echo "<td>" . $row['NATIONALITY'] . "</td>";
-                                        echo "<td>" . $row['RELIGION_BELIEF'] . "</td>";
+                                        echo "<td>" . $row['BELIEF'] . "</td>";
                                         echo "<td>" . $row['OCCUPATION'] . "</td>";
                                         echo "<td>" . $row['SPOUSE_NAME'] . "</td>";
                                         echo "<td>" . $row['SPOUSE_OCCUPATION'] . "</td>";
                                         echo "<td>" . $row['VOTER_STATUS'] . "</td>";
                                         echo "<td>";
-                                        echo '<a href="?id=' . $row['ID'] . '" class="mr-3 action" title="Update Record" data-toggle="tooltip"><span class="fas fa-pencil-alt"></span></a>';
-                                        echo '<a href="?id=' . $row['ID'] . '&delete=0" class="action" title="Delete Record" data-toggle="tooltip"><span class="fa fa-trash"></span></a>';
+                                        echo '<a href="?id=' . $row['RESIDENT_ID'] . '" class="mr-3 action" title="Update Record" data-toggle="tooltip"><span class="fas fa-pencil-alt"></span></a>';
+                                        echo '<a href="?id=' . $row['RESIDENT_ID'] . '&delete=0" class="action" title="Delete Record" data-toggle="tooltip"><span class="fa fa-trash"></span></a>';
                                         echo "</td>";
                                         echo "</tr>";
                                     }
@@ -213,7 +213,6 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
-
             $('#sidebarCollapse1').on('click', function () {
                 $('#sidebar, #content').toggleClass('active');
                 $('.collapse.in').toggleClass('in');
@@ -226,17 +225,15 @@
                 $('a[aria-expanded=true]').attr('aria-expanded', 'false');
             });
         });
-    </script>
-    
-    <script>
-    function popupOpen() {
-        var width = window.outerWidth*(4/5);
-        var height = window.outerHeight*(3/4);
-        var left = (screen.width/2)-(width/2);
-        var top = (screen.height/2)-(height/2);
-        var features =' width=' + width + ', height=' + height + ', top=' + top + ', left=' + left + ', resizable=false';
-        var addNewResident = window.open("resident-add.php", "window", features);
-    }
+
+        function popupOpen() {
+            var width = window.outerWidth*(4/5);
+            var height = window.outerHeight*(3/4);
+            var left = (screen.width/2)-(width/2);
+            var top = (screen.height/2)-(height/2);
+            var features =' width=' + width + ', height=' + height + ', top=' + top + ', left=' + left + ', resizable=false';
+            var addNewResident = window.open("resident-add.php", "window", features);
+        }
     </script>
 </body>
 

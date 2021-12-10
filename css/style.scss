@@ -256,3 +256,7 @@ tr.bg-dark {
     background-color: $gray-200;
     border: .2rem solid black;
 }
+
+td {
+    white-space: nowrap;
+}
