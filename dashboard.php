@@ -189,9 +189,6 @@
                             } else {
                                 echo "Oops! Something went wrong. Please try again later.";
                             }
-
-                            // Close connection
-                            $mysqli->close();
                         ?>
                     </div>
 
@@ -242,11 +239,15 @@
                                 </thead>
                                 <tbody>
                                     <?php
-                                        $index = 1;
+                                        $i = 0;
                                         foreach ($a_area as $text) {
+                                            $sql = "SELECT * FROM residents WHERE AREA = '".$i++."'";
+                                            if ($result = $mysqli->query($sql)) {
+                                                $count = $result->num_rows;
+                                            }
                                             echo "<tr>";
                                             echo "<td>".$text."</td>";
-                                            echo "<td>[COUNT]</td>";
+                                            echo "<td>".$count."</td>";
                                             echo "</tr>";
                                         }
                                     ?>
