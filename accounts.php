@@ -201,7 +201,7 @@
             <ul class="list-unstyled components">
                 <h4>Brgy. <?php echo $brgy_name;?></h4>
                 <li>
-                    <a href="index.php">
+                    <a href="dashboard.php">
                         <span class="icon"><i  class="fas fa-home"></i></span>
                         Dashboard
                     </a>
@@ -357,7 +357,7 @@
                                     <?php echo ($edit) ? "disabled" : ""?>
                                     required>
                             </div>
-                            <!-- middle-name -->
+                            <!-- username -->
                             <div class="input-group col-xl-4">
                                 <span class="mb-0 mt-auto mx-1">Username: </span>
                                 <input type="text"
@@ -371,9 +371,8 @@
                             <div class="input-group col-md-4">
                                 <span class="mb-0 mt-auto mx-1">Password: </span>
                                 <input type="password"
-                                    class="form-control <?php echo (!empty($password_err)) ? 'invalid' : ''; ?>" 
+                                    class="form-control" 
                                     name="password"
-                                    placeholder="<?php echo (!empty($password_err)) ? $password_err : ''; ?>"
                                     required>
                             </div>
                         </div>

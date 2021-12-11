@@ -7824,7 +7824,8 @@ a.text-dark:hover, a.text-dark:focus {
     DEMO STYLE
 */
 body {
-  font-family: 'Poppins', sans-serif; }
+  font-family: 'Poppins', sans-serif;
+  background: #ced4da; }
 
 p {
   font-family: 'Poppins', sans-serif;
@@ -8038,7 +8039,17 @@ tr.bg-dark {
   background-color: #e9ecef;
   border: .2rem solid black; }
 
+.image-view img {
+  width: 90%; }
+
 td, th {
   white-space: nowrap; }
+
+#sign-in {
+  background: #363636;
+  color: #fff; }
+
+.card-text {
+  color: #363636; }
 
 /*# sourceMappingURL=style.css.map */

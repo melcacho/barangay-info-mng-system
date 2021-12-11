@@ -20,6 +20,23 @@
     if(isset($_POST["reset"])) {
         $category = $search = "";
     }
+
+    if(isset($_GET["id"]) && !isset($_GET["del"])) {
+        if(isset($_GET["view"])) {
+            $type = "view=";
+        } elseif(isset($_GET["edit"])) {
+            $type = "edit=";
+        }
+
+        echo "<script>
+            var width = window.outerWidth*(4/5);
+            var height = window.outerHeight*(3/4);
+            var left = (screen.width/2)-(width/2);
+            var top = (screen.height/2)-(height/2);
+            var features =' width=' + width + ', height=' + height + ', top=' + top + ', left=' + left + ', resizable=false';
+            var addNewResident = window.open('popup-buffer.php?id=".trim($_GET["id"])."&".$type."&loggedin=1', 'window', features);
+        </script>";
+    }
 ?>
 
 <!DOCTYPE html>
@@ -60,7 +77,7 @@
             <ul class="list-unstyled components">
                 <h4>Brgy. <?php echo $brgy_name;?></h4>
                 <li>
-                    <a href="index.php">
+                    <a href="dashboard.php">
                         <span class="icon"><i  class="fas fa-home"></i></span>
                         Dashboard
                     </a>
@@ -127,8 +144,7 @@
                                     name="search"
                                     maxlength="50"
                                     title="Search"
-                                    value="<?php echo $search?>"
-                                    required>
+                                    value="<?php echo $search?>">
                             </div>
                             <!-- category -->
                             <div class="input-group col-sm-3 mb-2">
@@ -238,8 +254,9 @@
                                         echo "<td>" . (($row['VOTER_STATUS']) ? "Yes" : "No"). "</td>";
                                         echo "<td>" . (($row['VOTER_ACTIVE']) ? "Yes" : "No"). "</td>";
                                         echo "<td>";
-                                        echo '<a href="?id=' . $row['RESIDENT_ID'] . '" class="mr-3 action" title="Update Record" data-toggle="tooltip"><span class="fas fa-pencil-alt"></span></a>';
-                                        echo '<a href="?id=' . $row['RESIDENT_ID'] . '&delete=0" class="action" title="Delete Record" data-toggle="tooltip"><span class="fa fa-trash"></span></a>';
+                                        echo '<a href="?id=' . $row['RESIDENT_ID'] . '&view=" class="mr-3 action" title="View Record" data-toggle="tooltip"><span class="fa fa-eye"></span></a>';
+                                        echo '<a href="?id=' . $row['RESIDENT_ID'] . '&edit=" class="mr-3 action" title="Update Record" data-toggle="tooltip"><span class="fas fa-pencil-alt"></span></a>';
+                                        echo '<a href="?id=' . $row['RESIDENT_ID'] . '&del=" class="action" title="Delete Record" data-toggle="tooltip"><span class="fa fa-trash"></span></a>';
                                         echo "</td>";
                                         echo "</tr>";
                                     }
@@ -290,7 +307,11 @@
             var left = (screen.width/2)-(width/2);
             var top = (screen.height/2)-(height/2);
             var features =' width=' + width + ', height=' + height + ', top=' + top + ', left=' + left + ', resizable=false';
-            var addNewResident = window.open("resident-add.php", "window", features);
+            var addNewResident = window.open('popup-buffer.php?loggedin=1', "window", features);
+        }
+        
+        if(typeof window.history.pushState == 'function') {
+            window.history.pushState({}, "Hide", "resident-information.php");
         }
     </script>
 </body>

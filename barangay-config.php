@@ -14,6 +14,7 @@
         array_push($a_committee, fgets($myfile));
     }
     fclose($myfile);
+    $a_committee = array_filter($a_committee, 'trim');
 
     $myfile = fopen("assets/barangay-config/position.txt", "r") or die("Unable to open file!");
     $a_position = [];
@@ -21,6 +22,7 @@
         array_push($a_position, fgets($myfile));
     }
     fclose($myfile);
+    $a_position = array_filter($a_position, 'trim');
 
     $myfile = fopen("assets/barangay-config/area.txt", "r") or die("Unable to open file!");
     $a_area = [];
@@ -28,10 +30,8 @@
         array_push($a_area, fgets($myfile));
     }
     fclose($myfile);
-
-    $a_committee = array_filter($a_committee, 'trim');
-    $a_position = array_filter($a_position, 'trim');
     $a_area = array_filter($a_area, 'trim');
+
     
     if(isset($_GET["type"])) {
         $type = trim($_GET["type"]);
@@ -244,7 +244,7 @@
             <ul class="list-unstyled components">
                 <h4>Brgy. <?php echo $brgy_name;?></h4>
                 <li>
-                    <a href="index.php">
+                    <a href="dashboard.php">
                         <span class="icon"><i  class="fas fa-home"></i></span>
                         Dashboard
                     </a>

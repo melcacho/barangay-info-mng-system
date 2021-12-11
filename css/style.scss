@@ -13,6 +13,7 @@ $sb-secondary: #A8A7A7;
 @import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
 body {
     font-family: 'Poppins', sans-serif;
+    background: $gray-400;
 }
 
 p {
@@ -272,6 +273,19 @@ tr.bg-dark {
     border: .2rem solid black;
 }
 
+.image-view img{
+    width: 90%;
+}
+
 td, th {
     white-space: nowrap;
+}
+
+#sign-in {
+    background: $sb-bg;
+    color: #fff;
+}
+
+.card-text {
+    color: $sb-bg;
 }
