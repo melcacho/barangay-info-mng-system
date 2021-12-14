@@ -14,7 +14,7 @@
 <body>
     <div class="container-fluid my-2">
         <h2>New Resident Registration Form</h2>
-        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" enctype="multipart/form-data">
+        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
             <div class="row">   
                 <div class="form-group row">
                     <!-- last-name -->

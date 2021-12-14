@@ -279,6 +279,7 @@ tr.bg-dark {
 
 td, th {
     white-space: nowrap;
+    font-size: .8rem;
 }
 
 #sign-in {
@@ -288,4 +289,14 @@ td, th {
 
 .card-text {
     color: $sb-bg;
+}
+
+.cert {
+    height: 100%;
+}
+
+.cert .details {
+    height: 100%;
+    background: $sb-bg;
+    color: $gray-200;
 }

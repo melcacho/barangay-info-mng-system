@@ -8043,7 +8043,8 @@ tr.bg-dark {
   width: 90%; }
 
 td, th {
-  white-space: nowrap; }
+  white-space: nowrap;
+  font-size: .8rem; }
 
 #sign-in {
   background: #363636;
@@ -8051,5 +8052,13 @@ td, th {
 
 .card-text {
   color: #363636; }
+
+.cert {
+  height: 100%; }
+
+.cert .details {
+  height: 100%;
+  background: #363636;
+  color: #e9ecef; }
 
 /*# sourceMappingURL=style.css.map */

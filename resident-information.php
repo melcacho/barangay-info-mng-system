@@ -241,51 +241,53 @@
                                     echo '<table class="table table-bordered table-striped text-center bg-white">';
                                     echo "<thead>";
                                     echo "<tr>";
+                                    echo "<th>Action</th>";
+                                    echo "<th>Resident ID</th>";
                                     echo "<th>Family Name</th>";
                                     echo "<th>First Name</th>";
                                     echo "<th>Middle Name</th>";
                                     echo "<th>Alias</th>";
-                                    echo "<th>Face Marks</th>";
+                                    echo "<th>Sex</th>";
                                     echo "<th>Birth Date (YYYY-MM-DD)</th>";
                                     echo "<th>Birth Place</th>";
-                                    echo "<th>Sex</th>";
                                     echo "<th>Civil Status</th>";
+                                    echo "<th>Voter Status</th>";
+                                    echo "<th>Active Voter</th>";
+                                    echo "<th>Face Marks</th>";
                                     echo "<th>Nationality</th>";
                                     echo "<th>Religion / Belief</th>";
                                     echo "<th>Occupation</th>";
                                     echo "<th>Sector</th>";
                                     echo "<th>Spouse's Name</th>";
                                     echo "<th>Spouse's Occupation</th>";
-                                    echo "<th>Voter Status</th>";
-                                    echo "<th>Active Voter</th>";
-                                    echo "<th>Action</th>";
                                     echo "</tr>";
                                     echo "</thead>";
                                     echo "<tbody>";
                                     while ($row = $result->fetch_array()) {
                                         echo "<tr>";
+                                        echo "<td>";
+                                        echo '<a href="?id=' . $row['RESIDENT_ID'] . '&view=" class="mr-3 action" title="View Record" data-toggle="tooltip"><span class="fas fa-eye"><span class="fa fa-eye"></span></a>';
+                                        echo '<a href="?id=' . $row['RESIDENT_ID'] . '&edit=" class="mr-3 action" title="Update Record" data-toggle="tooltip"><span class="fas fa-pencil-alt"></span></a>';
+                                        echo '<a href="?id=' . $row['RESIDENT_ID'] . '&del=" class="action" title="Delete Record" data-toggle="tooltip"><span class="fa fa-trash"></span></a>';
+                                        echo "</td>";
+                                        echo "<td>" . $row['RESIDENT_ID'] . "</td>";
                                         echo "<td>" . $row['LNAME'] . "</td>";
                                         echo "<td>" . $row['FNAME'] . "</td>";
                                         echo "<td>" . $row['MNAME'] . "</td>";
                                         echo "<td>" . $row['ALIAS'] . "</td>";
-                                        echo "<td>" . $row['FACE_MARKS'] . "</td>";
-                                        echo "<td class='w-100'>" . $row['BIRTH_DATE'] . "</td>";
-                                        echo "<td>" . $row['BIRTH_PLACE'] . "</td>";
                                         echo "<td>" . $row['SEX'] . "</td>";
+                                        echo "<td>" . $row['BIRTH_DATE'] . "</td>";
+                                        echo "<td>" . $row['BIRTH_PLACE'] . "</td>";
                                         echo "<td>" . $a_civil_status[array_search($row['CIVIL_STATUS'], $a_cs_value)]. "</td>";
+                                        echo "<td>" . (($row['VOTER_STATUS']) ? "Yes" : "No"). "</td>";
+                                        echo "<td>" . (($row['VOTER_ACTIVE']) ? "Yes" : "No"). "</td>";
+                                        echo "<td>" . $row['FACE_MARKS'] . "</td>";
                                         echo "<td>" . $row['NATIONALITY'] . "</td>";
                                         echo "<td>" . $row['BELIEF'] . "</td>";
                                         echo "<td>" . $row['OCCUPATION'] . "</td>";
                                         echo "<td>" . $a_sector[array_search($row['SECTOR'], $a_st_value)]. "</td>";
                                         echo "<td>" . $row['SPOUSE_NAME'] . "</td>";
                                         echo "<td>" . $row['SPOUSE_OCCUPATION'] . "</td>";
-                                        echo "<td>" . (($row['VOTER_STATUS']) ? "Yes" : "No"). "</td>";
-                                        echo "<td>" . (($row['VOTER_ACTIVE']) ? "Yes" : "No"). "</td>";
-                                        echo "<td>";
-                                        echo '<a href="?id=' . $row['RESIDENT_ID'] . '&view=" class="mr-3 action" title="View Record" data-toggle="tooltip"><span class="fas fa-eye"><span class="fa fa-eye"></span></a>';
-                                        echo '<a href="?id=' . $row['RESIDENT_ID'] . '&edit=" class="mr-3 action" title="Update Record" data-toggle="tooltip"><span class="fas fa-pencil-alt"></span></a>';
-                                        echo '<a href="?id=' . $row['RESIDENT_ID'] . '&del=" class="action" title="Delete Record" data-toggle="tooltip"><span class="fa fa-trash"></span></a>';
-                                        echo "</td>";
                                         echo "</tr>";
                                     }
                                     echo "</tbody>";
@@ -400,7 +402,6 @@
             var features =' width=' + width + ', height=' + height + ', top=' + top + ', left=' + left + ', resizable=false';
             var addNewResident = window.open('popup-buffer.php?loggedin=1', "window", features);
         }
-        
         
         <?php echo ($modal_delete) ? '$(document).ready(function(){
             $(\'#delete_modal\').modal(\'show\');});' : ''; ?>

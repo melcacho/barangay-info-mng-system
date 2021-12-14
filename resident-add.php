@@ -136,6 +136,10 @@
             $spouse_occupation = trim($_POST["spouse-occupation"]);
         }
 
+        if(isset($_POST["voter-status"])) {
+            $voter_status = trim($_POST["voter-status"]);
+        }
+
         if(isset($_POST["voter-active"])) {
             $voter_active = trim($_POST["voter-active"]);
         }
@@ -246,9 +250,6 @@
                     } else {
                         $time = date("Gis");    
                     }
-                    echo "<script>
-                        alert('".date("Ymd").$time."');
-                    </script>";
                     
                     $param_trans_id = date("Ymd").$time;
                 }

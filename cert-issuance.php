@@ -124,7 +124,15 @@
             </nav>
 
             <div class="content">
-                
+                <div class="col-sm-4">
+                    <a id="asd"
+                        class="btn btn-success" 
+                        data-toggle="tooltip"
+                        onclick="popupOpen('cert-residency.php')">
+                        <i class="fa fa-plus"></i> 
+                        Certificate of Residency
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -155,6 +163,15 @@
                 $('a[aria-expanded=true]').attr('aria-expanded', 'false');
             });
         });
+        
+        function popupOpen(link) {
+                var width = window.outerWidth*(4/5);
+                var height = window.outerHeight*(3/4);
+                var left = (screen.width/2)-(width/2);
+                var top = (screen.height/2)-(height/2);
+                var features =' width=' + width + ', height=' + height + ', top=' + top + ', left=' + left + ', resizable=false';
+                var addNewResident = window.open(link, "window", features);
+            }
     </script>
 </body>
 

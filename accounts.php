@@ -115,16 +115,19 @@
         if(empty($username_err) && empty($res_id_err)) {
             $password = trim($_POST["password"]);
 
-            if(isset($admin_id)) {
+            if(!empty($admin_id)) {
                 $sql = "UPDATE admins SET COMMITTEE=?, POSITION=?, USERNAME=?, PASSWORD=? WHERE ADMIN_ID=?";
             } else {
+                echo '<script>
+                alert("add");
+                </script>';
                 $sql = "INSERT INTO admins (LNAME, FNAME, MNAME, COMMITTEE, POSITION, USERNAME, PASSWORD, RESIDENT_ID) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             }
 
 
             if ($stmt = $mysqli->prepare($sql)) {
-                if(isset($admin_id)) {
+                if(!empty($admin_id)) {
                     $stmt->bind_param("ssssi", $param_committee, $param_position, $param_username, 
                     $param_password, $_POST["id"]);
                 } else {
@@ -418,7 +421,7 @@
                             </div>
                         </div>
 
-                        <input type="hidden" name="id" value="<?php echo (isset($admin_id)) ? $admin_id : '';?>" />
+                        <input type="hidden" name="id" value="<?php echo (!empty($admin_id)) ? $admin_id : '';?>" />
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                             <button name="<?php echo ($edit) ? "edit" : "create"?>"
