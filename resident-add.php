@@ -2,7 +2,6 @@
     define('MB', 1048576);
     include_once('config.php');
     date_default_timezone_set('Asia/Manila');
-    
 
     $a_civil_status = ["Single", "Married", "Separated", "Widowed"];
     $a_cs_value = ['SG', 'MR', 'SP', 'WD'];
@@ -241,7 +240,17 @@
 
                     $param_date = date("Y/m/d").', '.date("h:i:sa");
                     $param_procby = 1;
-                    $param_trans_id = date("Ymd").date("Gis");
+                    
+                    if(strlen(date("G")) == 1) {
+                        $time = '0'.date("Gis");
+                    } else {
+                        $time = date("Gis");    
+                    }
+                    echo "<script>
+                        alert('".date("Ymd").$time."');
+                    </script>";
+                    
+                    $param_trans_id = date("Ymd").$time;
                 }
 
                 $param_lname = strtoupper($last_name);
@@ -450,10 +459,11 @@
                                 class="form-control"
                                 name="voter-status"
                                 <?php echo (isset($ses_type) && !$ses_type) ? 'disabled' : ''?>
+                                disabled
                                 required>
                                 <option value='' hidden selected>Select</option>
-                                <option value="1" <?php echo ($voter_status) ? 'selected' : ''; ?>>Yes</option>
-                                <option value="0" <?php echo (!$voter_status) ? 'selected' : ''; ?>>No</option>
+                                <option value="1" <?php echo (!empty($voter_status) && $voter_status) ? 'selected' : ''; ?>>Yes</option>
+                                <option value="0" <?php echo (!empty($voter_status) && !$voter_status) ? 'selected' : ''; ?>>No</option>
                             </select>
                             <select id="voter-active"
                                 class="form-control"
@@ -462,8 +472,8 @@
                                 <?php echo (!$voter_status) ? 'disabled' : ''?>
                                 required>
                                 <option value='' hidden selected>Select</option>
-                                <option value="1" <?php echo ($voter_status) ? 'selected' : ''; ?>>Active</option>
-                                <option value="0" <?php echo (!$voter_status) ? 'selected' : ''; ?>>Inactive</option>
+                                <option value="1" <?php echo (!empty($voter_active) && $voter_active) ? 'selected' : ''; ?>>Active</option>
+                                <option value="0" <?php echo (!empty($voter_active) && !$voter_active) ? 'selected' : ''; ?>>Inactive</option>
                             </select>
                         </div>
                     </div>

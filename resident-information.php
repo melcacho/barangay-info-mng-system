@@ -1,4 +1,6 @@
 <?php
+    require_once "config.php";
+    
     $myfile = fopen("assets/barangay-config/brgy-details.txt", "r") or die("Unable to open file!");
     $brgy_name = fgets($myfile);
     $brgy_address = fgets($myfile);
@@ -10,7 +12,8 @@
     "Senior Citizen (SC)", "Overseas Filipino Worker (OFW)", "Solo Parent", "Indigenous People (IP)", "Others"];
     $a_st_value = ['PRV', 'PUB', 'GOV', 'UEP', 'OSY', 'OSC', 'PWD', 'SEN', 'OFW', 'SPA', 'IDP', 'OTH'];
 
-    $category = $search = "";
+    $category = $search = $res_id = "";
+    $modal_delete = 0;
 
     if(isset($_POST["search"])) {
         $search = trim($_POST["search"]);
@@ -21,7 +24,11 @@
         $category = $search = "";
     }
 
-    if(isset($_GET["id"]) && !isset($_GET["del"])) {
+    if(isset($_GET["id"])) {
+        $res_id = trim($_GET["id"]);
+    }
+
+    if(!empty($res_id) && !isset($_GET["del"])) {
         if(isset($_GET["view"])) {
             $type = "view=";
         } elseif(isset($_GET["edit"])) {
@@ -34,8 +41,31 @@
             var left = (screen.width/2)-(width/2);
             var top = (screen.height/2)-(height/2);
             var features =' width=' + width + ', height=' + height + ', top=' + top + ', left=' + left + ', resizable=false';
-            var addNewResident = window.open('popup-buffer.php?id=".trim($_GET["id"])."&".$type."&loggedin=1', 'window', features);
+            var addNewResident = window.open('popup-buffer.php?id=".$res_id."&".$type."&loggedin=1', 'window', features);
         </script>";
+    } elseif(isset($_GET["del"])) {
+        $modal_delete = 1;
+    }
+
+    if(isset($_POST["delete"])) {
+        $sql = "DELETE FROM residents WHERE RESIDENT_ID = ?";
+
+        if ($stmt = $mysqli->prepare($sql)) {
+            $stmt->bind_param("i", $param_id);
+
+            $param_id = trim($_POST["id"]);
+
+            if ($stmt->execute()) {
+                echo '<script>
+                alert("Record Deleted");
+                </script>';
+                $modal_delete = 0;
+            } else {
+                echo '<script>
+                alert("Delete Sequence Error: Database Access Error");
+                </script>';
+            }
+        }
     }
 ?>
 
@@ -133,7 +163,7 @@
                     </div>
 
                     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" id="db-header"
-                        class="py-2">
+                        class="py-2 m-0">
                         <div class="input-group">
                             <!-- search -->
                             <div class="input-group col-sm-3 mb-2">
@@ -189,8 +219,6 @@
                                 array_push($a_position, fgets($myfile));
                             }
                             fclose($myfile);
-
-                            require_once "config.php";
 
                             if(!empty($search)) {
                                 switch($category) {
@@ -254,7 +282,7 @@
                                         echo "<td>" . (($row['VOTER_STATUS']) ? "Yes" : "No"). "</td>";
                                         echo "<td>" . (($row['VOTER_ACTIVE']) ? "Yes" : "No"). "</td>";
                                         echo "<td>";
-                                        echo '<a href="?id=' . $row['RESIDENT_ID'] . '&view=" class="mr-3 action" title="View Record" data-toggle="tooltip"><span class="fa fa-eye"></span></a>';
+                                        echo '<a href="?id=' . $row['RESIDENT_ID'] . '&view=" class="mr-3 action" title="View Record" data-toggle="tooltip"><span class="fas fa-eye"><span class="fa fa-eye"></span></a>';
                                         echo '<a href="?id=' . $row['RESIDENT_ID'] . '&edit=" class="mr-3 action" title="Update Record" data-toggle="tooltip"><span class="fas fa-pencil-alt"></span></a>';
                                         echo '<a href="?id=' . $row['RESIDENT_ID'] . '&del=" class="action" title="Delete Record" data-toggle="tooltip"><span class="fa fa-trash"></span></a>';
                                         echo "</td>";
@@ -274,6 +302,67 @@
                             }
                         ?>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="delete_modal" tabindex="-1" role="dialog" aria-labelledby="create" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-md " role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title" id="exampleModalLongTitle">WARNING!</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body mx-auto">
+                    <h4>Delete data of</h4>
+                    <?php 
+                        if($modal_delete) {
+                            require_once "config.php";
+
+                            // Prepare a select statement
+                            $sql = "SELECT FNAME, MNAME, LNAME FROM residents WHERE RESIDENT_ID = ?";
+                            if ($stmt = $mysqli->prepare($sql)) {
+
+                                // Bind variables to the prepared statement as parameters
+                                $stmt->bind_param("i", $param_id);
+                                // Set parameters
+                                $param_id = $res_id;
+
+                                // Attempt to execute the prepared statement
+                                if ($stmt->execute()) {
+                                    $result = $stmt->get_result();
+
+                                    if ($result->num_rows == 1) {
+                                        /* Fetch result row as an associative array. Since the result set
+                                        contains only one row, we don't need to use while loop */
+                                        $row = $result->fetch_array(MYSQLI_ASSOC);
+
+                                        echo '<h4>'.$row['LNAME'].', '.$row['FNAME'].' '.$row['MNAME'][0].'. ?</h4>';
+                                        
+                                    } else {
+                                        echo '<script>
+                                        alert("ID Error");
+                                        </script>';
+                                    }
+                                } else {
+                                    echo '<script>
+                                    alert("Oops! Something went wrong. Please try again later.");
+                                    </script>';
+                                }
+                            }   
+                        }
+                        // Close connection
+                        $mysqli->close();
+                    ?>
+
+                    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+                        <input type="hidden" name="id" value="<?php echo $res_id;?>" />
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" title="Close">Close</button>
+                        <button name="delete" type="submit" class="btn btn-danger" title="Delete Record">Confirm</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -299,6 +388,8 @@
                 $('.collapse.in').toggleClass('in');
                 $('a[aria-expanded=true]').attr('aria-expanded', 'false');
             });
+            
+            <?php echo ($modal_delete) ? "$('#delete_modal').modal('show');" : ""?>
         });
 
         function popupOpen() {
@@ -309,6 +400,10 @@
             var features =' width=' + width + ', height=' + height + ', top=' + top + ', left=' + left + ', resizable=false';
             var addNewResident = window.open('popup-buffer.php?loggedin=1', "window", features);
         }
+        
+        
+        <?php echo ($modal_delete) ? '$(document).ready(function(){
+            $(\'#delete_modal\').modal(\'show\');});' : ''; ?>
         
         if(typeof window.history.pushState == 'function') {
             window.history.pushState({}, "Hide", "resident-information.php");

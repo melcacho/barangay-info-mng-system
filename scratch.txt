@@ -14,7 +14,10 @@ E8175D
 474747
 363636
 
-username -> [surname+initials of fname]
+todo:
+delete sequence -> delete picture
+logs databse
+
 
 CREATE TABLE admins (
     ADMIN_ID INT(6) NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -57,6 +60,6 @@ CREATE TABLE residents (
     RES_STATUS CHAR(1) NOT NULL,
     DATE_TIME_REG CHAR(22) NOT NULL,
     PROCESSED_BY INT(6) NOT NULL,
-    TRANSACTION_ID INT(14) NOT NULL
+    TRANSACTION_ID CHAR(14) NOT NULL
 );
 
