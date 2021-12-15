@@ -1,4 +1,12 @@
 <?php
+    session_start();
+    date_default_timezone_set('Asia/Manila');
+    
+    if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+        header("location: index.php");
+        exit;
+    }
+    
     require_once "config.php";
 
     $a_civil_status = ["Single", "Married", "Separated", "Widowed"];
@@ -122,14 +130,62 @@
 
         $pdf -> SetFont('Arial', '', 12);
         $pdf -> setX(120);
-        $pdf -> Multicell(0,5,"\n\n\n\n\n\n Barangay ".$brgy_name,0,'C');
+        $pdf -> Multicell(0,5,"\n\n\n\n Barangay ".$brgy_name,0,'C');
 
         $pdf -> SetFont('Arial', '', 12);
         $pdf -> setX(120);
         $pdf -> Multicell(0,5,"\n\n_____________________
         \nBarangay Captain",0,'C');
 
-        $pdf->Output('I','Certificate of Residency.pdf'); 
+        $transaction_id = "BR-".date("YmdHis");
+        $pdf -> SetFont('Arial', 'B', 12);
+        $pdf -> setXY(145, 250);
+        $pdf -> Cell(0,5,$transaction_id,0,'C'); //Transaction ID
+
+        $sql = "INSERT INTO issuance (TRANSACTION_ID, PROCESSED_BY) VALUES (?, ?)";
+
+        if ($stmt = $mysqli->prepare($sql)) {
+            $stmt -> bind_param("ss", $param_transaction, $param_admin);
+
+            $param_transaction = $transaction_id;
+            $param_admin = $_SESSION["admin-id"];
+
+            if($stmt -> execute()) {
+                $pdf->Output('I','COR-'.$param_transaction.'.pdf');
+            } else {
+                echo '<script>
+                alert("Push Sequence Error: Database Access Error");
+                </script>';
+            }
+        } else {
+            echo '<script>
+            alert("Push Sequence Error: Database Parameters Error");
+            </script>';
+        }
+
+        $sql = "INSERT INTO logs (TIMESTAMP, ACTION, PROCESSED_BY) VALUES (?, ?, ?)";
+        $action = "Issued Barangay Residency ".$res_id." (".$param_transaction.")";
+
+        if ($stmt = $mysqli->prepare($sql)) {
+            $stmt -> bind_param("sss", $param_timestamp, $param_action, $param_admin);
+
+            $param_timestamp = date("Y-m-d H:i:s");
+            $param_action = $action;
+            $param_admin = $_SESSION["admin-id"];
+            if($stmt -> execute()) {
+                echo '<script>
+                alert("'.$action.'");
+                </script>';
+            } else {
+                echo '<script>
+                alert("'.$stmt->error.'");
+                </script>';
+            }
+        } else {
+            echo '<script>
+            alert("Push Sequence Error: Database Parameters Error");
+            </script>';
+        }
     }
 ?>
 

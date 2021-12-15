@@ -59,7 +59,6 @@
                     $face_marks = $row["FACE_MARKS"];
                     $spouse_name = $row["SPOUSE_NAME"];
                     $spouse_occupation = $row["SPOUSE_OCCUPATION"];
-                    $voter_status = $row["VOTER_STATUS"];
                     $contact_number_one = $row["CONTACT_ONE"];
                     $contact_number_two = $row["CONTACT_TWO"];
                     $email_one = $row["EMAIL_ONE"];
@@ -241,16 +240,10 @@
                     $param_votera, $param_contactone, $param_conacttwo, $param_address, $param_area, $param_emailone, 
                     $param_emailtwo, $param_restype, $param_resstat, $param_date, $param_procby, $param_trans_id);
 
-                    $param_date = date("Y/m/d").', '.date("h:i:sa");
+                    $param_date = date("Y/m/d, H:i:sa");
                     $param_procby = 1;
                     
-                    if(strlen(date("G")) == 1) {
-                        $time = '0'.date("Gis");
-                    } else {
-                        $time = date("Gis");
-                    }
-                    
-                    $param_trans_id = date("Ymd").$time;
+                    $param_trans_id = date("YmdHis");
                 }
 
                 $param_lname = strtoupper($last_name);
@@ -288,6 +281,38 @@
                         echo "<script>
                             alert('Resident Registered');
                         </script>";
+                    }
+
+                    if(isset($ses_type)) {
+                        $action = "Edited Resident ".$ses_id." (".date("YmdHis").")";
+                    } else {
+                        $sql = "SELECT RESIDENT_ID FROM residents WHERE TRANSACTION_ID = '".$param_trans_id."'";
+                        $result = $mysqli->query($sql);
+                        $row = $result->fetch_assoc();
+                        $action = "Added Resident ".$row["RESIDENT_ID"]." (".$param_trans_id.")";
+                    }
+                    
+                    $sql = "INSERT INTO logs (TIMESTAMP, ACTION, PROCESSED_BY) VALUES (?, ?, ?)";
+
+                    if ($stmt = $mysqli->prepare($sql)) {
+                        $stmt -> bind_param("sss", $param_timestamp, $param_action, $param_admin);
+
+                        $param_timestamp = date("Y-m-d H:i:s");
+                        $param_action = $action;
+                        $param_admin = $_SESSION["admin-id"];
+                        if($stmt -> execute()) {
+                            echo '<script>
+                            alert("'.$action.'");
+                            </script>';
+                        } else {
+                            echo '<script>
+                            alert("'.$stmt->error.'");
+                            </script>';
+                        }
+                    } else {
+                        echo '<script>
+                        alert("Push Sequence Error: Database Parameters Error");
+                        </script>';
                     }
 
                     if(!isset($ses_type)) {
@@ -464,8 +489,8 @@
                                 echo ($age < 18) ? "disabled" : ""?>
                                 required>
                                 <option value='' hidden selected>Select</option>
-                                <option value="1" <?php echo (!empty($voter_status) && $voter_status) ? 'selected' : ''; ?>>Yes</option>
-                                <option value="0" <?php echo (!empty($voter_status) && !$voter_status) ? 'selected' : ''; ?>>No</option>
+                                <option value="1" <?php echo (isset($voter_status) && $voter_status) ? 'selected' : ''; ?>>Yes</option>
+                                <option value="0" <?php echo (isset($voter_status) && !$voter_status) ? 'selected' : ''; ?>>No</option>
                             </select>
                             <select id="voter-active"
                                 class="form-control"
@@ -474,8 +499,8 @@
                                 <?php echo (!$voter_status) ? 'disabled' : ''?>
                                 required>
                                 <option value='' hidden selected>Select</option>
-                                <option value="1" <?php echo (!empty($voter_status) && $voter_active) ? 'selected' : ''; ?>>Active</option>
-                                <option value="0" <?php echo (!empty($voter_status) && !$voter_active) ? 'selected' : ''; ?>>Inactive</option>
+                                <option value="1" <?php echo ($voter_status && $voter_active) ? 'selected' : ''; ?>>Active</option>
+                                <option value="0" <?php echo ($voter_status && !$voter_active) ? 'selected' : ''; ?>>Inactive</option>
                             </select>
                         </div>
                     </div>

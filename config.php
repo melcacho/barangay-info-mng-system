@@ -70,6 +70,30 @@ if($mysqli->query($sql)) {
     </script>';
 } 
 
+$sql = "CREATE TABLE logs (
+    TIMESTAMP CHAR(19) NOT NULL PRIMARY KEY,
+    ACTION VARCHAR(80),
+    PROCESSED_BY INT(6)
+)";
+
+if($mysqli->query($sql)) {
+    echo '<script>
+    alert("Table Logs Created");
+    </script>';
+} 
+
+$sql = "CREATE TABLE issuance (
+    TRANSACTION_ID CHAR(17) NOT NULL PRIMARY KEY,
+    PROCESSED_BY INT(6) NOT NULL
+)";
+
+if($mysqli->query($sql)) {
+    echo '<script>
+    alert("Table Issuance Created");
+    </script>';
+} 
+
+
 /*else {
     echo '<script>
     alert("'.mysqli_error($mysqli).'");

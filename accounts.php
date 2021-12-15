@@ -1,5 +1,11 @@
 <?php
-    // Include config file
+    session_start();
+    
+    if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+        header("location: index.php");
+        exit;
+    }
+    
     require_once "config.php";
 
     // Define variables and initialize with empty values
@@ -228,6 +234,12 @@
                     <a href="barangay-config.php">
                         <span class="icon"><i  class="fas fa-cog"></i></span>
                         Barangay Config
+                    </a>
+                </li>
+                <li class="text-danger">
+                    <a href="logout.php">
+                        <span class="icon"><i  class="fas fa-sign-out-alt"></i></span>
+                        Logout
                     </a>
                 </li>
             </ul>

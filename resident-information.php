@@ -1,4 +1,12 @@
 <?php
+    session_start();
+    date_default_timezone_set('Asia/Manila');
+    
+    if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+        header("location: index.php");
+        exit;
+    }
+    
     require_once "config.php";
     
     $myfile = fopen("assets/barangay-config/brgy-details.txt", "r") or die("Unable to open file!");
@@ -60,9 +68,33 @@
                 alert("Record Deleted");
                 </script>';
                 $modal_delete = 0;
+
+                $sql = "INSERT INTO logs (TIMESTAMP, ACTION, PROCESSED_BY) VALUES (?, ?, ?)";
+                $action = "Deleted Resident ".$param_id." (".date("YmdHis").")";
+
+                if ($stmt = $mysqli->prepare($sql)) {
+                    $stmt -> bind_param("sss", $param_timestamp, $param_action, $param_admin);
+
+                    $param_timestamp = date("Y-m-d H:i:s");
+                    $param_action = $action;
+                    $param_admin = $_SESSION["admin-id"];
+                    if($stmt -> execute()) {
+                        echo '<script>
+                        alert("'.$action.'");
+                        </script>';
+                    } else {
+                        echo '<script>
+                        alert("'.$stmt->error.'");
+                        </script>';
+                    }
+                } else {
+                    echo '<script>
+                    alert("'.$stmt->error.'");
+                    </script>';
+                }
             } else {
                 echo '<script>
-                alert("Delete Sequence Error: Database Access Error");
+                alert("'.$stmt->error.'");
                 </script>';
             }
         }
@@ -134,6 +166,12 @@
                     <a href="barangay-config.php">
                         <span class="icon"><i  class="fas fa-cog"></i></span>
                         Barangay Config
+                    </a>
+                </li>
+                <li class="text-danger">
+                    <a href="logout.php">
+                        <span class="icon"><i  class="fas fa-sign-out-alt"></i></span>
+                        Logout
                     </a>
                 </li>
             </ul>

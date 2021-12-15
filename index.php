@@ -22,7 +22,7 @@
                             session_start();
 
                             $_SESSION["loggedin"] = true;
-                            $_SESSION["admin_id"] = $admin_id;
+                            $_SESSION["admin-id"] = $admin_id;
 
                             header("location: dashboard.php");
                         } else {

@@ -1,4 +1,12 @@
 <?php
+    session_start();
+    
+    if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+        header("location: index.php");
+        exit;
+    }
+    
+    
     define('MB', 1048576);
     $brgy_name = $brgy_address = "";
     $brgy_name_err = $brgy_address_err = $err = "";
@@ -271,6 +279,12 @@
                     <a>
                         <span class="icon"><i  class="fas fa-cog"></i></span>
                         Barangay Config
+                    </a>
+                </li>
+                <li class="text-danger">
+                    <a href="logout.php">
+                        <span class="icon"><i  class="fas fa-sign-out-alt"></i></span>
+                        Logout
                     </a>
                 </li>
             </ul>
