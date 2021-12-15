@@ -5,8 +5,6 @@
         header("location: index.php");
         exit;
     }
-    
-    echo "<script>alert(".$_SESSION["admin-id"].")</script>";
 
     require_once "config.php";
     

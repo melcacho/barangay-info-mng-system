@@ -1,4 +1,9 @@
 <?php
+    session_start();
+
+    $_SESSION = array();
+
+    session_destroy();
     require_once "config.php";
 
     $username = $password = $login_err = "";
@@ -69,13 +74,13 @@
 
 <body>
     <div class="d-flex h-100 align-items-center justify-content-center">
-        <div id="sign-in" class="col-xl-6 p-5 rounded-lg">
+        <div id="sign-in" class="p-5 rounded-lg">
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-                <h2>Welcome  Back!</h2>
+                <h2>Barangay Information System</h2>
                 <hr>
                 <div class="form-group">
                     <!-- username -->
-                    <div class="input-group">
+                    <div class="input-group my-2">
                         <span class="mb-0 mt-auto mx-1">Username: </span>
                         <input type="text"
                             class="form-control text-white"
@@ -83,7 +88,7 @@
                             required>
                     </div>
                     <!-- password -->
-                    <div class="input-group">
+                    <div class="input-group my-2">
                         <span class="mb-0 mt-auto mx-1">Password: </span>
                         <input type="password"
                             class="form-control text-white" 

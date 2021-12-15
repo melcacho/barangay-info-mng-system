@@ -137,13 +137,22 @@
             </nav>
 
             <div class="content">
-                <div class="col-sm-4">
+                <div class="card-sm m-2">
                     <a id="asd"
                         class="btn btn-success" 
                         data-toggle="tooltip"
                         onclick="popupOpen('cert-residency.php')">
                         <i class="fa fa-plus"></i> 
                         Certificate of Residency
+                    </a>
+                </div>
+                <div class="card-sm m-2">
+                    <a id="asd"
+                        class="btn btn-success" 
+                        data-toggle="tooltip"
+                        onclick="popupOpen('cert-clearance.php')">
+                        <i class="fa fa-plus"></i> 
+                        Barangay Clearance
                     </a>
                 </div>
             </div>
