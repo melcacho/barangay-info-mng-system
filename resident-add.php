@@ -248,7 +248,7 @@
                     if(strlen(date("G")) == 1) {
                         $time = '0'.date("Gis");
                     } else {
-                        $time = date("Gis");    
+                        $time = date("Gis");
                     }
                     
                     $param_trans_id = date("Ymd").$time;
