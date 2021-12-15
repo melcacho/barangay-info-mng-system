@@ -35,6 +35,7 @@
                     $middle_name = $row["MNAME"];
                     $civil_status = $row["CIVIL_STATUS"];
                     $nationality = $row["NATIONALITY"];
+                    $birth_date = $row["BIRTH_DATE"];
                 }
             } else {
                 $res_id_err = "Nonexistent Resident ID";

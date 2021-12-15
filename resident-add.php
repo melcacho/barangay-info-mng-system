@@ -48,6 +48,7 @@
                     $sex = $row["SEX"];
                     $alias = $row["ALIAS"];
                     $voter_status = $row["VOTER_STATUS"];
+                    $voter_active = $row["VOTER_ACTIVE"];
                     $area = $row["AREA"];
                     $address = $row["ADDRESS"];
                     $sector = $row["SECTOR"];
@@ -101,7 +102,7 @@
         
         //validate spouse name
         if(isset($_POST["spouse-name"])) {
-            if (!preg_match('/^[a-zA-Z ]+$/', trim($_POST["spouse-name"]))) {
+            if (!preg_match('/^[a-zA-Z. ]+$/', trim($_POST["spouse-name"]))) {
                 $spouse_name_err = "Must only contain letters";
             } else {
                 $spouse_name = trim($_POST["spouse-name"]);
@@ -199,14 +200,12 @@
         $civil_status = trim($_POST["civil-status"]);
         $sex = trim($_POST["sex"]);
         $alias = trim($_POST["alias"]);
-        $voter_status = trim($_POST["voter-status"]);
         $area = trim($_POST["area"]);
         $address = trim($_POST["address"]);
         $sector = trim($_POST["sector"]);
         $nationality = trim($_POST["nationality"]);
         $belief = trim($_POST["belief"]);
         $face_marks = trim($_POST["face-marks"]);
-        $voter_status = trim($_POST["voter-status"]);
         $email_one = trim($_POST["email-one"]);
         $email_two = trim($_POST["email-two"]);
         $resident_type = trim($_POST["resident-type"]);
@@ -460,7 +459,9 @@
                                 class="form-control"
                                 name="voter-status"
                                 <?php echo (isset($ses_type) && !$ses_type) ? 'disabled' : ''?>
-                                disabled
+                                <?php $diff = date_diff(date_create($birth_date), date_create(date("Y-m-d")));
+                                $age = $diff->format('%y');
+                                echo ($age < 18) ? "disabled" : ""?>
                                 required>
                                 <option value='' hidden selected>Select</option>
                                 <option value="1" <?php echo (!empty($voter_status) && $voter_status) ? 'selected' : ''; ?>>Yes</option>
@@ -473,8 +474,8 @@
                                 <?php echo (!$voter_status) ? 'disabled' : ''?>
                                 required>
                                 <option value='' hidden selected>Select</option>
-                                <option value="1" <?php echo (!empty($voter_active) && $voter_active) ? 'selected' : ''; ?>>Active</option>
-                                <option value="0" <?php echo (!empty($voter_active) && !$voter_active) ? 'selected' : ''; ?>>Inactive</option>
+                                <option value="1" <?php echo (!empty($voter_status) && $voter_active) ? 'selected' : ''; ?>>Active</option>
+                                <option value="0" <?php echo (!empty($voter_status) && !$voter_active) ? 'selected' : ''; ?>>Inactive</option>
                             </select>
                         </div>
                     </div>
@@ -755,7 +756,7 @@
                     }
                     
                     if(age >= 18) {
-                    $('#voter-status').prop('disabled', false);
+                        $('#voter-status').prop('disabled', false);
                     } else {
                         $('#voter-status').prop('disabled', true).val('').removeAttr("alt");
                     }
