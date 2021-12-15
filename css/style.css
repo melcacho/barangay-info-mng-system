@@ -8054,11 +8054,16 @@ td, th {
   color: #363636; }
 
 .cert {
-  height: 100%; }
+  background: #363636; }
 
 .cert .details {
-  height: 100%;
-  background: #363636;
   color: #e9ecef; }
+
+.cert .form-control {
+  color: #fff; }
+
+.cert .form-control:disabled {
+  background: #e9ecef;
+  color: #363636; }
 
 /*# sourceMappingURL=style.css.map */

@@ -292,11 +292,18 @@ td, th {
 }
 
 .cert {
-    height: 100%;
+    background: $sb-bg;
 }
 
 .cert .details {
-    height: 100%;
-    background: $sb-bg;
     color: $gray-200;
+}
+
+.cert .form-control {
+    color: #fff;
+}
+
+.cert .form-control:disabled {
+    background: $gray-200;
+    color: $sb-bg;
 }

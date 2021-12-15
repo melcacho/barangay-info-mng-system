@@ -118,9 +118,6 @@
             if(!empty($admin_id)) {
                 $sql = "UPDATE admins SET COMMITTEE=?, POSITION=?, USERNAME=?, PASSWORD=? WHERE ADMIN_ID=?";
             } else {
-                echo '<script>
-                alert("add");
-                </script>';
                 $sql = "INSERT INTO admins (LNAME, FNAME, MNAME, COMMITTEE, POSITION, USERNAME, PASSWORD, RESIDENT_ID) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             }
