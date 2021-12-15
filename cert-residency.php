@@ -5,8 +5,44 @@
         
         $pdf = new FPDF();
         $pdf->AddPage();
-        $pdf->SetFont('Arial','B',16);
-        $pdf->Cell(40,10,'Hello World!');
+        $pdf -> SetFont('Arial', '', 12);
+        $pdf->Multicell(0,2,"Republic of the Philippines
+        \nProvince of Dummy Province
+        \nCity / Municipality of Dummy City",0,'C'); 
+
+        $pdf -> SetFont('Arial', 'B', 16);
+        $pdf->Multicell(0,10,"Barangay Langgam\n\n",0,'C'); 
+
+        $pdf -> SetFont('Arial', 'B', 24);
+        $pdf->Multicell(0,15,"Certificate of Residency\n\n",0,'C'); 
+
+        $pdf -> SetFont('Arial', '', 12);
+        $pdf -> setX(20);
+        $pdf-> Multicell(0,3,"This is to certify that <name>, of legal age, <civil status>, <nationality> Citizen, whose",0,'L');
+
+        $pdf -> SetFont('Arial', '', 12);
+        $pdf -> Multicell(0,5,"specimen signature appears below is a PERMANENT RESIDENT of this Barangay Langgam.\n\n",0,'L');
+
+        $pdf -> SetFont('Arial', '', 12);
+        $pdf -> setX(20);
+        $pdf-> Multicell(0,3,"Based on records on this office, he / she has been residing at Barangay Langgam.\n\n\n",0,'L');
+
+        $pdf -> SetFont('Arial', '', 12);
+        $pdf -> setX(20);
+        $pdf-> Multicell(0,3,"This CERTIFICATION is being issued upon the request of the above-named person for",0,'L');
+
+        $pdf -> SetFont('Arial', '', 12);
+        $pdf -> Multicell(0,5,"whatever legal purpose it may serve.\n\n",0,'L');
+
+        $pdf -> SetFont('Arial', '', 12);
+        $pdf -> setX(20);
+        $pdf-> Multicell(0,3,"Issued this <date> at Barangay Langgam",0,'L');
+
+        $pdf -> SetFont('Arial', '', 12);
+        $pdf -> setX(10);
+        $pdf-> Multicell(0,3,"\n\n\n\n\n\nSpecimen Signature
+        \n\n_____________________",0,'L');
+
         $pdf->Output();
     }
 ?>

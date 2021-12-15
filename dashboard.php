@@ -88,7 +88,7 @@
                 <li>
                     <a href="cert-issuance.php">
                         <span class="icon"><i  class="fas fa-certificate"></i></span>
-                        Certificatie Issuance
+                        Certificate Issuance
                     </a>
                 </li>
                 <li>
