@@ -61,13 +61,16 @@
                 $modal_delete = 0;
             } else {
                 echo '<script>
-                alert("Delete Sequence Error: Database Access Error");
+                alert("Delete Sequence Error: Database Access Error 2");
                 </script>';
             }
         }
     }
 
     if(isset($_POST["create"]) || isset($_POST["edit"])) {
+        if(isset($_POST["id"]) && !empty($_POST["id"])) {
+            $admin_id = trim($_POST["id"]);
+        }
         $sql = "SELECT * FROM admins WHERE USERNAME = '".strtoupper(trim($_POST["username"]))."'";
         if(!preg_match('/^[a-zA-Z ]+$/', trim($_POST["username"]))) {
             $username_err = "Must only contain letters";
@@ -147,20 +150,26 @@
                 $param_password = password_hash($password, PASSWORD_DEFAULT);
 
                 if ($stmt->execute()) {
+                    if(!empty($admin_id)) {
+                        echo '<script>
+                        alert("Admin Edited");
+                        </script>';
+                    } else {
+                        echo '<script>
+                        alert("Admin Added");
+                        </script>';
+                    }
                     $first_name = $middle_name = $last_name = $res_id = $username = $password = $committee = 
                     $position = $admin_id = "";
                     $modal_create = 0;
-                    echo '<script>
-                    alert("Admin Added");
-                    </script>';
                 } else {
                     echo '<script>
-                    alert("Push Sequence Error: Database Access Error");
+                    alert("'.$stmt->error.'");
                     </script>';
                 }
             } else {
                 echo '<script>
-                alert("Push Sequence Error: Database Access Error");
+                alert("Push Sequence Error: Parameters Error");
                 </script>';
             }
         } else {

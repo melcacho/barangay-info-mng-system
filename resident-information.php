@@ -14,6 +14,14 @@
     $brgy_address = fgets($myfile);
     fclose($myfile);
 
+    $myfile = fopen("assets/barangay-config/area.txt", "r") or die("Unable to open file!");
+    $a_area = [];
+    while(!feof($myfile)) {
+        array_push($a_area, fgets($myfile));
+    }
+    fclose($myfile);
+    $a_area = array_filter($a_area, 'trim');
+
     $a_civil_status = ["Single", "Married", "Separated", "Widowed"];
     $a_cs_value = ['SG', 'MR', 'SP', 'WD'];
     $a_sector= ["Private", "Public", "Government", "Unemployed", "Out of School Youth (OSY)", "Out of School Children (OSC)", "Person With Disability (PWD)",
@@ -195,7 +203,7 @@
             </nav>
 
             <div class="content">
-                <div class="container-xl">
+                <div class="container-fluid">
                     <div class="mt-5 mb-3 clearfix d-flex">
                         <h2 class="my-auto">Resident Information Management</h2>
                     </div>
@@ -291,6 +299,7 @@
                                     echo "<th>Civil Status</th>";
                                     echo "<th>Voter Status</th>";
                                     echo "<th>Active Voter</th>";
+                                    echo "<th>Purok</th>";
                                     echo "<th>Face Marks</th>";
                                     echo "<th>Nationality</th>";
                                     echo "<th>Religion / Belief</th>";
@@ -319,6 +328,7 @@
                                         echo "<td>" . $a_civil_status[array_search($row['CIVIL_STATUS'], $a_cs_value)]. "</td>";
                                         echo "<td>" . (($row['VOTER_STATUS']) ? "Yes" : "No"). "</td>";
                                         echo "<td>" . (($row['VOTER_ACTIVE']) ? "Yes" : "No"). "</td>";
+                                        echo "<td>" . $a_area[$row['AREA']] . "</td>";
                                         echo "<td>" . $row['FACE_MARKS'] . "</td>";
                                         echo "<td>" . $row['NATIONALITY'] . "</td>";
                                         echo "<td>" . $row['BELIEF'] . "</td>";
@@ -438,7 +448,7 @@
             var left = (screen.width/2)-(width/2);
             var top = (screen.height/2)-(height/2);
             var features =' width=' + width + ', height=' + height + ', top=' + top + ', left=' + left + ', resizable=false';
-            var addNewResident = window.open('popup-buffer.php?loggedin=1', "window", features);
+            var asdasd = window.open('popup-buffer.php?loggedin=1', "window", features);
         }
         
         <?php echo ($modal_delete) ? '$(document).ready(function(){

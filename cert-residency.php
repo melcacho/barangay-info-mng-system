@@ -59,11 +59,11 @@
         fclose($myfile);
 
         $pdf = new FPDF('P', 'mm', 'Letter');
-        $pdf->AddPage();
+        $pdf -> AddPage();
         $pdf -> SetFont('Arial', '', 12);
         $pdf->Multicell(0,2,"Republic of the Philippines
-        \nProvince of Dummy Province
-        \nCity / Municipality of Dummy City\n\n",0,'C'); 
+        \nProvince of ".explode(", ", $brgy_address)[1]."
+        \nCity / Municipality of ".explode(", ", $brgy_address)[1]."\n\n",0,'C'); 
 
         $pdf -> SetFont('Arial', 'B', 16);
         $pdf->Multicell(0,5,"Barangay ".$brgy_name,0,'C'); 
@@ -102,7 +102,7 @@
         
         $pdf -> SetFont('Arial', '', 12);
         $pdf -> setY(75);
-        $pdf -> Multicell(0,5," of __________ age, ______________, ____________________ Citizen, whose specimen signature appears below is a PERMANENT RESIDENT of this Barangay".", ".$brgy_address.".\n\n\n",0,'L');
+        $pdf -> Multicell(0,5,"is of __________ age, ______________, ____________________ Citizen, whose specimen signature appears below is a PERMANENT RESIDENT of this Barangay".", ".$brgy_address.".\n\n\n",0,'L');
 
         $pdf -> SetFont('Arial', '', 12);
         $pdf -> setX(20);
@@ -151,7 +151,7 @@
             $param_admin = $_SESSION["admin-id"];
 
             if($stmt -> execute()) {
-                $pdf->Output('I','COR-'.$param_transaction.'.pdf');
+                $pdf->Output('I', $param_transaction.'.pdf');
             } else {
                 echo '<script>
                 alert("Push Sequence Error: Database Access Error");
@@ -194,7 +194,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Add New Resident</title>
+    <title>Certificate of Residency</title>
     <link rel="stylesheet" href="css/style.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>

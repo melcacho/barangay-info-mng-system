@@ -273,51 +273,42 @@
                 $param_resstat = $resident_status;
 
                 if ($stmt->execute()) {
-                    if(isset($ses_type)) {
-                        echo "<script>
-                            alert('Data Updated');
-                        </script>";
-                    } else {
-                        echo "<script>
-                            alert('Resident Registered');
-                        </script>";
-                    }
-
-                    if(isset($ses_type)) {
-                        $action = "Edited Resident ".$ses_id." (".date("YmdHis").")";
-                    } else {
-                        $sql = "SELECT RESIDENT_ID FROM residents WHERE TRANSACTION_ID = '".$param_trans_id."'";
-                        $result = $mysqli->query($sql);
-                        $row = $result->fetch_assoc();
-                        $action = "Added Resident ".$row["RESIDENT_ID"]." (".$param_trans_id.")";
-                    }
-                    
-                    $sql = "INSERT INTO logs (TIMESTAMP, ACTION, PROCESSED_BY) VALUES (?, ?, ?)";
-
-                    if ($stmt = $mysqli->prepare($sql)) {
-                        $stmt -> bind_param("sss", $param_timestamp, $param_action, $param_admin);
-
-                        $param_timestamp = date("Y-m-d H:i:s");
-                        $param_action = $action;
-                        $param_admin = $_SESSION["admin-id"];
-                        if($stmt -> execute()) {
-                            echo '<script>
-                            alert("'.$action.'");
-                            </script>';
-                        } else {
-                            echo '<script>
-                            alert("'.$stmt->error.'");
-                            </script>';
-                        }
-                    } else {
-                        echo '<script>
-                        alert("Push Sequence Error: Database Parameters Error");
-                        </script>';
-                    }
-
-                    if(!isset($ses_type)) {
+                    if($_FILES["profile"]["size"] != 0) {
+                        $first_name = strtoupper($first_name);
+                        $last_name = strtoupper($last_name);
                         $pic_name = $first_name[0].$first_name[1].$last_name[-1].$last_name[-2].explode('-', $birth_date)[1];
                         if (move_uploaded_file($_FILES["profile"]["tmp_name"], $target_dir.$pic_name.'.png')) {
+                            if(isset($ses_type)) {
+                                $action = "Edited Resident ".$ses_id." (".date("YmdHis").")";
+                            } else {
+                                $sql = "SELECT RESIDENT_ID FROM residents WHERE TRANSACTION_ID = '".$param_trans_id."'";
+                                $result = $mysqli->query($sql);
+                                $row = $result->fetch_assoc();
+                                $action = "Added Resident ".$row["RESIDENT_ID"]." (".$param_trans_id.")";
+                            }
+                            
+                            $sql = "INSERT INTO logs (TIMESTAMP, ACTION, PROCESSED_BY) VALUES (?, ?, ?)";
+        
+                            if ($stmt = $mysqli->prepare($sql)) {
+                                $stmt -> bind_param("sss", $param_timestamp, $param_action, $param_admin);
+        
+                                $param_timestamp = date("Y-m-d H:i:s");
+                                $param_action = $action;
+                                $param_admin = $_SESSION["admin-id"];
+                                if($stmt -> execute()) {
+                                    echo '<script>
+                                    alert("'.$action.'");
+                                    </script>';
+                                } else {
+                                    echo '<script>
+                                    alert("'.$stmt->error.'");
+                                    </script>';
+                                }
+                            } else {
+                                echo '<script>
+                                alert("Push Sequence Error: Database Parameters Error");
+                                </script>';
+                            }
                             echo "<script>
                                 window.close();
                             </script>";
@@ -326,10 +317,6 @@
                             alert('Sorry, there was an error uploading your file');
                             </script>";
                         }
-                    } else {
-                        echo "<script>
-                            window.close();
-                        </script>";
                     }
                 } else {
                     echo '<script>
@@ -351,7 +338,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Add New Resident</title>
+    <title>Resident Information</title>
     <link rel="stylesheet" href="css/style.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>

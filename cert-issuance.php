@@ -5,42 +5,74 @@
         header("location: index.php");
         exit;
     }
-    
-    require_once "config.php";
-    
+
     $myfile = fopen("assets/barangay-config/brgy-details.txt", "r") or die("Unable to open file!");
     $brgy_name = fgets($myfile);
     $brgy_address = fgets($myfile);
     fclose($myfile);
+    
+    require_once "config.php";
 
-    $myfile = fopen("assets/barangay-config/area.txt", "r") or die("Unable to open file!");
-    $a_area = [];
-    while(!feof($myfile)) {
-        array_push($a_area, fgets($myfile));
+    if(isset($_POST["issuance-report"])) {
+        $sql = "SELECT * FROM issuance";
+
+        if ($result = $mysqli->query($sql)) {
+            if($result->num_rows > 0){ 
+                $delimiter = ","; 
+                $filename = "issuance-report-" . date('Ymd') . ".csv"; 
+                 
+                $f = fopen('php://memory', 'w'); 
+                 
+                $fields = array('TRANSACTION ID', 'PROCESSED BY'); 
+                fputcsv($f, $fields, $delimiter); 
+                 
+                while($row = $result->fetch_assoc()){ 
+                    $lineData = array($row['TRANSACTION_ID'], $row['PROCESSED_BY']); 
+                    fputcsv($f, $lineData, $delimiter); 
+                } 
+                
+                fseek($f, 0); 
+                
+                header('Content-Type: text/csv'); 
+                header('Content-Disposition: attachment; filename="' . $filename . '";'); 
+                
+                fpassthru($f); 
+            }
+            die();
+        } else {
+            $mysqli -> error;
+        }
     }
-    fclose($myfile);
-    $a_area = array_filter($a_area, 'trim');
 
-    $total_count = $male_count = 0;
+    if(isset($_POST["logs-report"])) {
+        $sql = "SELECT * FROM logs";
 
-    $sql = "SELECT * FROM residents";
-    if ($result = $mysqli->query($sql)) {
-        $total_count = $result->num_rows;
-    }
-
-    $sql = "SELECT * FROM residents WHERE SEX = 'M'";
-    if ($result = $mysqli->query($sql)) {
-        $male_count = $result->num_rows;
-    }
-
-    $sql = "SELECT * FROM residents WHERE SEX = 'F'";
-    if ($result = $mysqli->query($sql)) {
-        $female_count = $result->num_rows;
-    }
-
-    $sql = "SELECT * FROM residents WHERE VOTER_STATUS = 1";
-    if ($result = $mysqli->query($sql)) {
-        $voter_count = $result->num_rows;
+        if ($result = $mysqli->query($sql)) {
+            if($result->num_rows > 0){ 
+                $delimiter = ","; 
+                $filename = "logs-report-" . date('Ymd') . ".csv"; 
+                 
+                $f = fopen('php://memory', 'w'); 
+                 
+                $fields = array('TIMESTAMP', 'ACTION', 'PROCESSED BY'); 
+                fputcsv($f, $fields, $delimiter); 
+                 
+                while($row = $result->fetch_assoc()){ 
+                    $lineData = array($row['TIMESTAMP'], $row['ACTION'], $row['PROCESSED_BY']); 
+                    fputcsv($f, $lineData, $delimiter); 
+                } 
+                
+                fseek($f, 0); 
+                
+                header('Content-Type: text/csv'); 
+                header('Content-Disposition: attachment; filename="' . $filename . '";'); 
+                
+                fpassthru($f); 
+            }
+            die();
+        } else {
+            $mysqli -> error;
+        }
     }
 ?>
 
@@ -138,8 +170,7 @@
 
             <div class="content">
                 <div class="card-sm m-2">
-                    <a id="asd"
-                        class="btn btn-success" 
+                    <a class="btn btn-success" 
                         data-toggle="tooltip"
                         onclick="popupOpen('cert-residency.php')">
                         <i class="fa fa-plus"></i> 
@@ -147,14 +178,28 @@
                     </a>
                 </div>
                 <div class="card-sm m-2">
-                    <a id="asd"
-                        class="btn btn-success" 
+                    <a class="btn btn-success" 
                         data-toggle="tooltip"
                         onclick="popupOpen('cert-clearance.php')">
                         <i class="fa fa-plus"></i> 
                         Barangay Clearance
                     </a>
                 </div>
+
+                <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+                    <div class="card-sm m-2">
+                        <button name="issuance-report" class="btn btn-primary">
+                            <i class="fas fa-download"></i>
+                            Download Issuance Report
+                        </button>
+                    </div>
+                    <div class="card-sm m-2">
+                        <button name="logs-report" class="btn btn-primary">
+                            <i class="fas fa-download"></i>
+                            Download Logs Report
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -187,13 +232,13 @@
         });
         
         function popupOpen(link) {
-                var width = window.outerWidth*(4/5);
-                var height = window.outerHeight*(3/4);
-                var left = (screen.width/2)-(width/2);
-                var top = (screen.height/2)-(height/2);
-                var features =' width=' + width + ', height=' + height + ', top=' + top + ', left=' + left + ', resizable=false';
-                var addNewResident = window.open(link, "window", features);
-            }
+            var width = window.outerWidth*(4/5);
+            var height = window.outerHeight*(3/4);
+            var left = (screen.width/2)-(width/2);
+            var top = (screen.height/2)-(height/2);
+            var features ='width=' + width + ', height=' + height + ', top=' + top + ', left=' + left + ', resizable=false';
+            var popup = window.open(link, 'window', features);
+        }
     </script>
 </body>
 
